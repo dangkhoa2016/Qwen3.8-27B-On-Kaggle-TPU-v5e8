@@ -1,0 +1,12 @@
+[
+  {
+    "name": "qwen38-production-fresh-executed.ipynb",
+    "sha256": "15189f8cfc17eaa67e7748ed02cb3b283a4ea89084ce18e1aced7638dfe61005",
+    "bytes": 163667
+  },
+  {
+    "name": "qwen38_27b_tpu_v5e8_text_vision_fresh_20261018.json",
+    "sha256": "063e902f9bc26ee1afadccf74a7ae020d29668d5dfd9d889da5225b08d661a8a",
+    "bytes": 56838
+  }
+]
