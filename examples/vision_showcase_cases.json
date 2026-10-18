@@ -1,0 +1,109 @@
+{
+  "version": 1,
+  "purpose": "Qwen3.8-27B Text+Vision capability showcase",
+  "cases": [
+    {
+      "id": "vision-2d-dashboard",
+      "kind": "2D infographic",
+      "image": "vision_2d_city_bike_dashboard.jpg",
+      "prompt": "Analyze this delivery dashboard. Extract the four KPI values, identify the busiest day from the bar chart, report the three category shares, and give two concise operational insights. Only use information visible in the image.",
+      "checks": [
+        "128",
+        "94%",
+        "6.4",
+        "42",
+        "Saturday",
+        "45%",
+        "30%",
+        "25%"
+      ]
+    },
+    {
+      "id": "vision-2d-greenhouse",
+      "kind": "2D technical diagram",
+      "image": "vision_2d_smart_greenhouse.jpg",
+      "prompt": "Explain this smart greenhouse diagram. Read the four live status values, identify the scheduled irrigation time and alert state, then trace how sensing, control, power, irrigation, fan, and grow light relate to each other.",
+      "checks": [
+        "24.8",
+        "61%",
+        "38%",
+        "72%",
+        "17:30",
+        "None"
+      ]
+    },
+    {
+      "id": "vision-3d-robotics",
+      "kind": "3D scene",
+      "image": "vision_3d_robotics_station.jpg",
+      "prompt": "Inspect this robotics workstation. Identify the main equipment and colored toolboxes, read the run label, temperature, storage-bin labels, and sticky note, then state what action should happen first and why.",
+      "checks": [
+        "Test Run 04",
+        "27.4",
+        "A1",
+        "A2",
+        "B1",
+        "B2",
+        "Calibrate sensor first"
+      ]
+    },
+    {
+      "id": "vision-3d-warehouse",
+      "kind": "3D logistics scene",
+      "image": "vision_3d_warehouse_dock_b2.jpg",
+      "prompt": "Analyze this warehouse scene. Read the dock, shelf, box-number and schedule labels; count the traffic cones and forklift; then summarize the workflow order shown on the whiteboard.",
+      "checks": [
+        "Dock B2",
+        "S1",
+        "S2",
+        "S3",
+        "12",
+        "18",
+        "21",
+        "34",
+        "55",
+        "09:00",
+        "11:30",
+        "15:00"
+      ]
+    },
+    {
+      "id": "vision-real-workspace",
+      "kind": "real-life desk",
+      "image": "vision_real_sprint_workspace.jpg",
+      "prompt": "Read and reason over this office desk. Extract the sprint-planning date and three agenda items, the sticky-note reminder, the phone time, and both receipt prices. Compute the receipt total and the minutes remaining until the reminder.",
+      "checks": [
+        "18 Oct 2026",
+        "API review",
+        "TPU benchmark",
+        "Vision demo assets",
+        "14:30",
+        "14:05",
+        "3.50",
+        "6.20",
+        "9.70",
+        "25"
+      ]
+    },
+    {
+      "id": "vision-real-market",
+      "kind": "real-life market",
+      "image": "vision_real_fresh_market.jpg",
+      "prompt": "Inspect this farmers-market stall. List the five products with their visible prices, identify the cheapest and most expensive listed items, read the opening time, and compute the difference between the highest and lowest per-unit listed prices.",
+      "checks": [
+        "Apples",
+        "28k",
+        "Oranges",
+        "35k",
+        "Tomatoes",
+        "22k",
+        "Carrots",
+        "18k",
+        "Lettuce",
+        "16k",
+        "7:30",
+        "19"
+      ]
+    }
+  ]
+}
