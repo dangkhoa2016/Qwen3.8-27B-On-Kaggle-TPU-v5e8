@@ -1,0 +1,109 @@
+{
+  "version": 1,
+  "purpose": "Qwen3.8-27B Text+Vision capability showcase",
+  "cases": [
+    {
+      "id": "vision-2d-dashboard",
+      "kind": "2D infographic",
+      "image": "vision_2d_city_bike_dashboard.jpg",
+      "prompt": "Analyze this delivery dashboard. Extract the four KPI values, identify the busiest day from the bar chart, report the three category shares, and give two concise operational insights. Only use information visible in the image.",
+      "checks": [
+        "128",
+        "94%",
+        "6.4",
+        "42",
+        "Saturday",
+        "45%",
+        "30%",
+        "25%"
+      ]
+    },
+    {
+      "id": "vision-2d-greenhouse",
+      "kind": "2D technical diagram",
+      "image": "vision_2d_smart_greenhouse.jpg",
+      "prompt": "Explain this smart greenhouse diagram. Read the four live status values, identify the scheduled irrigation time and alert state, then trace how sensing, control, power, irrigation, fan, and grow light relate to each other.",
+      "checks": [
+        "24.8",
+        "61%",
+        "38%",
+        "72%",
+        "17:30",
+        "None"
+      ]
+    },
+    {
+      "id": "vision-3d-robotics",
+      "kind": "technical robotics illustration",
+      "image": "vision_3d_robotics_station.jpg",
+      "prompt": "Interpret this annotated robotics workstation illustration: identify the robot arm and storage bins, read the Test Run, temperature, A1/A2/B1/B2 labels and sticky note; explain the action that should happen first. Only report what is visible.",
+      "checks": [
+        "Test Run 04",
+        "27.4",
+        "A1",
+        "A2",
+        "B1",
+        "B2",
+        "Calibrate sensor first"
+      ]
+    },
+    {
+      "id": "vision-3d-warehouse",
+      "kind": "illustrated warehouse workflow",
+      "image": "vision_3d_warehouse_dock_b2.jpg",
+      "prompt": "Read this annotated warehouse workflow graphic. Identify Dock B2, shelves S1/S2/S3, box numbers and dispatch schedule; count the visible cones and the forklift symbol, then explain the workflow order.",
+      "checks": [
+        "Dock B2",
+        "S1",
+        "S2",
+        "S3",
+        "12",
+        "18",
+        "21",
+        "34",
+        "55",
+        "09:00",
+        "11:30",
+        "15:00"
+      ]
+    },
+    {
+      "id": "vision-real-workspace",
+      "kind": "illustrated sprint planning board",
+      "image": "vision_real_sprint_workspace.jpg",
+      "prompt": "Extract the sprint-planning date, three agenda items, reminder time, phone time, and two receipt prices shown on this illustrated planning desk; calculate the total and minutes until reminder.",
+      "checks": [
+        "18 Oct 2026",
+        "API review",
+        "TPU benchmark",
+        "Vision demo assets",
+        "14:30",
+        "14:05",
+        "3.50",
+        "6.20",
+        "9.70",
+        "25"
+      ]
+    },
+    {
+      "id": "vision-real-market",
+      "kind": "illustrated farmers-market price board",
+      "image": "vision_real_fresh_market.jpg",
+      "prompt": "Extract all five products and prices on this illustrated market board, determine cheapest and most expensive, read opening time, and compute the price difference between highest and lowest.",
+      "checks": [
+        "Apples",
+        "28k",
+        "Oranges",
+        "35k",
+        "Tomatoes",
+        "22k",
+        "Carrots",
+        "18k",
+        "Lettuce",
+        "16k",
+        "7:30",
+        "19"
+      ]
+    }
+  ]
+}
