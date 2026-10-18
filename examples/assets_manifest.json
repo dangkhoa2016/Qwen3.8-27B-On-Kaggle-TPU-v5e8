@@ -1,0 +1,104 @@
+{
+  "version": 1,
+  "assets": [
+    {
+      "path": "examples/images/cozy_daylight_workspace_with_city_views.jpg",
+      "sha256": "134410a37ecf5ffe6aad73fd24dd17f9ae2f455605ca0e801198fe2e92ecd48e",
+      "dimensions": [
+        1024,
+        768
+      ],
+      "bytes": 94299
+    },
+    {
+      "path": "examples/images/northstar_office_supply_invoice.jpg",
+      "sha256": "ba91d31a9c4242ed127bf6ff8af0bff467b9d254f713f995934bdd86bb50c5c9",
+      "dimensions": [
+        1024,
+        768
+      ],
+      "bytes": 85685
+    },
+    {
+      "path": "examples/images/vision_2d_city_bike_dashboard.jpg",
+      "sha256": "6a5c4fbd26e3417eb87cacc3255b2e52bfe2baf0e41c39bd47f94f884fbdb64d",
+      "dimensions": [
+        256,
+        192
+      ],
+      "bytes": 9377
+    },
+    {
+      "path": "examples/images/vision_2d_smart_greenhouse.jpg",
+      "sha256": "e25d8644cc08dd830fd11bb0c6230e22721e151f542ed45f1b6aacee33d6191a",
+      "dimensions": [
+        256,
+        192
+      ],
+      "bytes": 7754
+    },
+    {
+      "path": "examples/images/vision_3d_robotics_station.jpg",
+      "sha256": "f17e9c7e1952b292fb918e2f7a171d5a2abe29102a7e857c94d639b6d8d903e3",
+      "dimensions": [
+        256,
+        192
+      ],
+      "bytes": 8501
+    },
+    {
+      "path": "examples/images/vision_3d_warehouse_dock_b2.jpg",
+      "sha256": "5fdb6910255a4636af740a692256b89af3fc1bd9a00aa5ddab004808455bac75",
+      "dimensions": [
+        256,
+        192
+      ],
+      "bytes": 9060
+    },
+    {
+      "path": "examples/images/vision_real_fresh_market.jpg",
+      "sha256": "10ac872ed2b9e0a0cae0a02765043c82d39ea7896e6339e7e1904cf7407da15a",
+      "dimensions": [
+        256,
+        192
+      ],
+      "bytes": 10009
+    },
+    {
+      "path": "examples/images/vision_real_sprint_workspace.jpg",
+      "sha256": "c6c2820c0f305b00fc489425de5089e498948fef656af4bf6df26c545ee63023",
+      "dimensions": [
+        256,
+        192
+      ],
+      "bytes": 6290
+    },
+    {
+      "path": "examples/images/vision_test_card_482_256x192.png",
+      "sha256": "d68f0c644969c1682c73eecf197d3bb4db98cb6ce813508d20cad893898e6d34",
+      "dimensions": [
+        256,
+        192
+      ],
+      "bytes": 11205
+    },
+    {
+      "path": "examples/images/vision_test_card_731_256x192.png",
+      "sha256": "6ba522549e8f08a8ccae9d2fb133b8bf281993dfa3fd6673b2edc5ddc06078bc",
+      "dimensions": [
+        256,
+        192
+      ],
+      "bytes": 6802
+    },
+    {
+      "path": "examples/images/warm_desk_still_life_with_business_card.jpg",
+      "sha256": "000de08a043dcbaa52265581a81a5bdfcf056150edc01d084b9a817446abac6d",
+      "dimensions": [
+        1024,
+        768
+      ],
+      "bytes": 99419
+    }
+  ]
+}
