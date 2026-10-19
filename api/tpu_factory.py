@@ -28,29 +28,76 @@ def digest(path: Path) -> str:
             h.update(chunk)
     return h.hexdigest()
 
+def _archive_path(support_dir: Path) -> Path:
+    names = ["src/maxtext-f0b2abe-qwen38-text-vision-patched.tar.gz",
+             "maxtext-f0b2abe-qwen38-text-vision-patched.tar.gz",
+             "maxtext-f0b2abe-qwen38-text-vision-patched.tar.gz.blob"]
+    matches = [support_dir / name for name in names if (support_dir / name).is_file()]
+    if len(matches) != 1:
+        raise RuntimeError(f"Expected exactly one matching MaxText archive: {len(matches)}")
+    archive = matches[0]
+    if digest(archive) != ARCHIVE_SHA256:
+        raise RuntimeError("MaxText archive SHA256 mismatch")
+    return archive
+
+
+def ensure_pinned_source(*, support_dir: Path = SUPPORT_DIR,
+                         source_dir: Path = MAXTEXT_DIR) -> Path:
+    """Restore a trusted archive without network access or destructive replacement."""
+    import tarfile
+    archive = _archive_path(support_dir)
+    if source_dir.exists():
+        # Existing directory must already have valid provenance; never overwrite it.
+        _check_source_metadata(source_dir)
+        return source_dir
+    source_dir.parent.mkdir(parents=True, exist_ok=True)
+    import tempfile
+    with tempfile.TemporaryDirectory(prefix="qwen38-source-", dir=source_dir.parent) as tmp:
+        stage = Path(tmp) / "staging"
+        stage.mkdir()
+        with tarfile.open(archive, "r:gz") as tf:
+            for member in tf.getmembers():
+                rel = Path(member.name)
+                if member.issym() or member.islnk() or member.isdev() or rel.is_absolute() or ".." in rel.parts:
+                    raise RuntimeError("Unsafe MaxText archive member")
+            tf.extractall(stage, filter="data")
+        _check_source_metadata(stage)
+        stage.rename(source_dir)
+    return source_dir
+
+
+def _check_source_metadata(source_dir: Path) -> None:
+    meta = json.loads((source_dir / "QWEN38_OFFLINE_BUILD.json").read_text())
+    if (meta.get("maxtext_commit") != MAXTEXT_COMMIT or
+        meta.get("patch_sha256") != PATCH_SHA256 or
+        meta.get("scope") != "Qwen3.8-27B text+vision combined production candidate"):
+        raise RuntimeError("Patched MaxText provenance mismatch")
+    if not (source_dir / "src/maxtext/configs/models/qwen3.8-27b.yml").is_file():
+        raise RuntimeError("Missing patched Qwen3.8 MaxText model config")
+
+
 def preflight(*, model_dir: Path = MODEL_DIR, support_dir: Path = SUPPORT_DIR,
               source_dir: Path = MAXTEXT_DIR) -> dict:
-    """Fast, CPU-only provenance gate; it never loads model weights."""
-    assert model_dir.is_dir(), "Qwen3.8 model dataset not mounted"
-    assert (model_dir / "config.json").is_file()
+    """CPU-only integrity gate, including real local model/checkpoint assets."""
+    if not model_dir.is_dir():
+        raise RuntimeError("Qwen3.8 model dataset not mounted")
+    config = json.loads((model_dir / "config.json").read_text())
+    if config.get("model_type") != "qwen3_5":
+        raise RuntimeError("Unexpected checkpoint model_type")
     index = json.loads((model_dir / "model.safetensors.index.json").read_text())
     shards = sorted(model_dir.glob("model-*.safetensors"))
-    assert len(shards) == 18, f"Expected 18 safetensors shards, got {len(shards)}"
-    assert index.get("metadata", {}).get("total_size") == 55_562_855_904
+    if len(shards) != 18 or index.get("metadata", {}).get("total_size") != 55_562_855_904:
+        raise RuntimeError("Incorrect model shard count or index size")
+    declared = set(index.get("weight_map", {}).values())
+    if {p.name for p in shards} != declared or any(p.stat().st_size == 0 for p in shards):
+        raise RuntimeError("Model shard index or file integrity mismatch")
     patch = support_dir / "maxtext-qwen38-production-text-vision.patch"
-    assert patch.is_file() and digest(patch) == PATCH_SHA256
-    archives = [
-        support_dir / "src/maxtext-f0b2abe-qwen38-text-vision-patched.tar.gz",
-        support_dir / "maxtext-f0b2abe-qwen38-text-vision-patched.tar.gz",
-        support_dir / "maxtext-f0b2abe-qwen38-text-vision-patched.tar.gz.blob",
-    ]
-    archive = next((path for path in archives if path.is_file()), None)
-    assert archive is not None and digest(archive) == ARCHIVE_SHA256
-    meta = json.loads((source_dir / "QWEN38_OFFLINE_BUILD.json").read_text())
-    assert meta["maxtext_commit"] == MAXTEXT_COMMIT
-    assert meta["patch_sha256"] == PATCH_SHA256
-    assert meta.get("scope") == "Qwen3.8-27B text+vision combined production candidate"
-    assert (source_dir / "src/maxtext/configs/models/qwen3.8-27b.yml").is_file()
+    if not patch.is_file() or digest(patch) != PATCH_SHA256:
+        raise RuntimeError("MaxText patch SHA256 mismatch")
+    _archive_path(support_dir)
+    _check_source_metadata(source_dir)
+    if not (support_dir / "vision_test_card_731_256x192.png").is_file():
+        raise RuntimeError("Vision seed card missing")
     return {"model_dir": str(model_dir), "support_dir": str(support_dir),
             "source_dir": str(source_dir), "maxtext_commit": MAXTEXT_COMMIT}
 
@@ -70,6 +117,7 @@ def build_tpu_runner():
     """One BF16 load. Fail closed unless explicitly enabled and on TPU."""
     if os.environ.get("QWEN38_EXPERIMENTAL_TPU_ENABLE") != "YES_I_ACCEPT_UNQUALIFIED_API":
         raise RuntimeError("TPU adapter disabled: explicit experimental opt-in required")
+    ensure_pinned_source()
     paths = preflight()
     # Never import JAX until the TPU process environment has been configured.
     _set_tpu_env()
