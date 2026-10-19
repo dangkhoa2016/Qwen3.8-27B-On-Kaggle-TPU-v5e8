@@ -35,10 +35,9 @@ def test_missing_or_mismatched_archive_rejected(tmp_path):
 
 def test_notebook_git_commit_pin_resolves_locally():
     import subprocess
-    import nbformat
     repo = Path(__file__).resolve().parents[1]
-    notebook = nbformat.read(repo / "notebooks/kaggle-tpu-v5e8-production-showcase.ipynb", as_version=4)
-    snippets = [cell.source for cell in notebook.cells if "EXAMPLES_COMMIT =" in cell.source]
+    notebook = json.loads((repo / "notebooks/kaggle-tpu-v5e8-production-showcase.ipynb").read_text())
+    snippets = ["".join(cell.get("source", [])) for cell in notebook["cells"] if "EXAMPLES_COMMIT =" in "".join(cell.get("source", []))]
     assert len(snippets) == 1
     import re
     match = re.search(r"EXAMPLES_COMMIT = '([0-9a-f]{40})'", snippets[0])
