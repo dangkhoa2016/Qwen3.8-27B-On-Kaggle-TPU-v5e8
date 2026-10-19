@@ -1,0 +1,42 @@
+name: CPU API and Browser Acceptance
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  cpu-acceptance:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install CPU dependencies
+        run: python -m pip install -r requirements-cpu.txt
+      - name: Unit tests
+        run: python -m pytest -q tests/test_api.py tests/test_runtime.py tests/test_http_runtime.py tests/test_tpu_factory_auth.py tests/test_serving_config.py tests/test_tpu_asgi.py tests/test_offline_preflight.py
+      - name: Install browser testing dependencies
+        run: |
+          npm ci
+          npx playwright install --with-deps chromium
+      - name: Browser E2E tests
+        run: npm run test:e2e
+      - name: Upload Playwright report on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-results
+          path: test-results/
+          if-no-files-found: ignore
