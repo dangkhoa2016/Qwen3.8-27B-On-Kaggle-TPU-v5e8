@@ -1,5 +1,7 @@
 # TPU adapter integration status
 
+> 🌐 Language / Ngôn ngữ: **English** | [Tiếng Việt](TPU-INTEGRATION.vi.md)
+
 **Status:** CPU lifecycle unit tests PASS; actual TPU HTTP inference not yet tested.
 
 The accepted notebook at `evidence/qwen38-production-fresh-executed.ipynb`

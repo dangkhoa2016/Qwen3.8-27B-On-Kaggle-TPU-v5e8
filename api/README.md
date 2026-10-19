@@ -1,5 +1,7 @@
 # CPU API development
 
+> 🌐 Language / Ngôn ngữ: **English** | [Tiếng Việt](README.vi.md)
+
 Development endpoints use FastAPI with a clearly marked **MOCK** backend.
 They do **not** load or execute the Qwen3.8-27B weights.
 Do not publicly expose this development server; no authentication is implemented.
