@@ -55,3 +55,22 @@ The default API enforces these request caps even in mock mode. There is **no
 live TPU HTTP serving deployment** in this commit; a dedicated guarded
 TPU ASGI entrypoint, API ingress security audit and real-device acceptance are
 still required. Never set experimental flags on a public tunnel prematurely.
+
+## Separate experimental ASGI entrypoint
+
+`api/tpu_asgi.py:app` is now a separate import-time gated experimental app.
+`api.app:app` remains the CPU mock app and is not instantiated in experimental
+mode. Experimental import requires `QWEN38_SERVING_MODE=tpu-experimental`,
+`QWEN38_EXPERIMENTAL_TPU_ENABLE=YES_I_ACCEPT_UNQUALIFIED_API`,
+`QWEN38_TPU_HTTP_ACCEPTANCE=I_ACCEPT_NOT_YET_QUALIFIED`, and
+`QWEN38_API_KEY` of 24+ characters, plus loopback host and one worker.
+
+Only the FastAPI lifespan triggers `build_tpu_runner()`; import-time checks
+never load parameters. If initialization fails, readiness returns 503 and
+requests fail closed. Successful experimental replies have `mock: false` and
+report `backend: tpu-experimental`; this still does NOT imply acceptance.
+The source is not yet validated against live MaxEngine HTTP inference.
+Never expose this experimental entrypoint via tunnel or public ingress.
+Use exactly one Uvicorn worker, bind `127.0.0.1`, and do not enable
+`--reload`; the Python config validation alone cannot enforce arbitrary
+external Uvicorn command-line binding overrides.
