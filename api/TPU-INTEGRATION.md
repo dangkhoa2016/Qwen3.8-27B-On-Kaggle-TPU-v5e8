@@ -30,3 +30,16 @@ the port match the previous notebook (fixed prefill 256 / target 384).
 ## CPU HTTP lifecycle validation
 
 FastAPI now provides `create_app(runner_factory=...)` for injected test runners, while the default executable `app` remains strictly mock-only. `lifespan` starts a fake runner once and closes it on shutdown. HTTP readiness, refusal on failed startup (503), and busy rejection (429) are tested in `tests/test_http_runtime.py`. This does not enable a real MaxEngine HTTP service.
+
+## Startup factory and API key
+
+`api/tpu_factory.py` now contains a fail-closed TPU-only factory with pinned MaxText
+source, BF16 model archive checks, device verification and one MaxEngine load.
+The factory requires `QWEN38_EXPERIMENTAL_TPU_ENABLE=YES_I_ACCEPT_UNQUALIFIED_API`
+before model initialization and has **not** been run on TPU. The default ASGI
+`app` remains mock-only; do not expose a real runner through Cloudflare yet.
+
+Set `QWEN38_API_KEY` to require a Bearer token for text and vision endpoints.
+This is an initial CPU authentication gate, not a complete public-facing
+security review (rate limits, headers, ingress policies and secrets management
+still pending).
