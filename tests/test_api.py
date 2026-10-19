@@ -38,3 +38,10 @@ def test_vision_rejects_non_image():
 def test_vision_rejects_mime_spoof():
     r=client.post("/v1/vision/analyze",data={"prompt":"Read"},files={"image":("fake.png",b"invalid data","image/png")})
     assert r.status_code==422
+
+
+def test_ui_served():
+    response=client.get("/")
+    assert response.status_code==200
+    assert "MOCK BACKEND" in response.text
+    assert "sendVision" in response.text
