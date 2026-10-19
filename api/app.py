@@ -22,8 +22,6 @@ from api.runtime import BackendBusy, BackendUnavailable, InferenceRuntime, State
 from api.serving_config import ServingConfig
 
 SERVING_CONFIG = ServingConfig.from_environment()
-if SERVING_CONFIG.mode != "mock":
-    raise RuntimeError("Default ASGI application is mock-only; TPU staging adapter is not qualified")
 BACKEND = os.getenv("QWEN38_BACKEND", "mock")
 if BACKEND != "mock":
     raise RuntimeError("ASGI entrypoint is mock-only until live TPU HTTP acceptance passes")
@@ -68,11 +66,13 @@ def require_api_key(authorization: str | None = Header(default=None)) -> None:
     if not supplied.startswith(prefix) or not secrets.compare_digest(supplied[len(prefix):], expected):
         raise HTTPException(status_code=401, detail="Unauthorized", headers={"WWW-Authenticate": "Bearer"})
 
-def create_app(*, runner_factory: Callable | None = None) -> FastAPI:
+def create_app(*, runner_factory: Callable | None = None, _experimental_real: bool = False) -> FastAPI:
     """For tests only, supply runner_factory. Default ASGI app never loads a model."""
-    test_double = runner_factory is not None
-    runtime = InferenceRuntime(runner_factory) if test_double else None
-    backend = "fake-test-runner" if test_double else "mock"
+    if _experimental_real and (runner_factory is None or SERVING_CONFIG.mode != "tpu-experimental"):
+        raise RuntimeError("TPU experimental entrypoint configuration missing")
+    test_double = runner_factory is not None and not _experimental_real
+    runtime = InferenceRuntime(runner_factory) if runner_factory is not None else None
+    backend = "tpu-experimental" if _experimental_real else ("fake-test-runner" if test_double else "mock")
 
     @asynccontextmanager
     async def lifespan(_: FastAPI):
@@ -102,7 +102,8 @@ def create_app(*, runner_factory: Callable | None = None) -> FastAPI:
         state = runtime.health() if runtime else None
         return {
             "status": "ok" if state is None or state["state"] == "ready" else "degraded",
-            "backend": backend, "model_loaded": False, "inference_available": False,
+            "backend": backend, "model_loaded": bool(_experimental_real and state and state["model_loaded"]),
+            "inference_available": bool(_experimental_real and state and state["model_loaded"]),
             "runner_ready": bool(state and state["state"] == "ready"),
             "runner_state": state["state"] if state else "not_configured",
         }
@@ -113,14 +114,16 @@ def create_app(*, runner_factory: Callable | None = None) -> FastAPI:
             return {"ready": True, "mode": "mock", "real_model_ready": False}
         if runtime.state is not State.READY:
             raise HTTPException(status_code=503, detail="Runner not ready")
-        return {"ready": True, "mode": backend, "real_model_ready": False}
+        return {"ready": True, "mode": backend, "real_model_ready": _experimental_real}
 
     @application.get("/metrics")
     def metrics():
         state = runtime.health() if runtime else {}
         return {
-            "backend": backend, "model_load_count": 0, "is_tpu": False,
-            "real_inference_requests": 0, "note": "CPU mock/test-double only",
+            "backend": backend, "model_load_count": state.get("model_load_count", 0) if _experimental_real else 0,
+            "is_tpu": _experimental_real,
+            "real_inference_requests": state.get("completed_requests", 0) if _experimental_real else 0,
+            "note": "Experimental TPU; unqualified" if _experimental_real else "CPU mock/test-double only",
             "test_runner_load_count": state.get("model_load_count", 0),
             "test_runner_completed_requests": state.get("completed_requests", 0),
             "test_runner_busy": state.get("busy", False),
@@ -138,13 +141,13 @@ def create_app(*, runner_factory: Callable | None = None) -> FastAPI:
                 result = await runtime.invoke("text", prompt, max_decode_steps=req.max_tokens)
             except Exception as exc:
                 raise _infer_error(exc) from exc
-            text = "[FAKE RUNNER — NOT QWEN INFERENCE] " + str(result.get("generated_text", ""))
+            text = ("" if _experimental_real else "[FAKE RUNNER — NOT QWEN INFERENCE] ") + str(result.get("generated_text", ""))
         else:
             text = mock_reply(prompt)
         return {
-            "id": "mock-" + uuid.uuid4().hex, "object": "chat.completion",
+            "id": ("tpu-" if _experimental_real else "mock-") + uuid.uuid4().hex, "object": "chat.completion",
             "created": int(time.time()), "model": req.model, "backend": backend,
-            "mock": True,
+            "mock": not _experimental_real,
             "choices": [{"index": 0, "message": {"role": "assistant", "content": text},
                          "finish_reason": "stop"}],
             "usage": {"prompt_tokens": None, "completion_tokens": None, "total_tokens": None},
@@ -186,11 +189,12 @@ def create_app(*, runner_factory: Callable | None = None) -> FastAPI:
                     result = await runtime.invoke("vision", prompt, image_path=file_path, max_decode_steps=160)
                 except Exception as exc:
                     raise _infer_error(exc) from exc
-                answer = "[FAKE RUNNER — NOT QWEN VISION INFERENCE] " + str(result.get("generated_text", ""))
+                answer = ("" if _experimental_real else "[FAKE RUNNER — NOT QWEN VISION INFERENCE] ") + str(result.get("generated_text", ""))
             else:
                 answer = "[MOCK — NOT VISION INFERENCE] Image uploaded successfully. No model was run."
             return {
-                "id": "mock-" + uuid.uuid4().hex, "backend": backend, "mock": True,
+                "id": ("tpu-" if _experimental_real else "mock-") + uuid.uuid4().hex,
+                "backend": backend, "mock": not _experimental_real,
                 "filename": image.filename, "bytes_received": size, "content_type": content_type,
                 "prompt": prompt, "answer": answer,
             }
@@ -206,4 +210,4 @@ class _NullWriter:
     def __exit__(self, *_): return False
     def write(self, _: bytes): pass
 
-app = create_app()
+app = create_app() if SERVING_CONFIG.mode == "mock" else None
