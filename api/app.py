@@ -2,11 +2,13 @@
 from __future__ import annotations
 
 import os
+from pathlib import Path
 import time
 import uuid
 from typing import Literal
 
 from fastapi import FastAPI, File, Form, HTTPException, UploadFile
+from fastapi.responses import FileResponse
 from pydantic import BaseModel, Field
 
 BACKEND = os.getenv("QWEN38_BACKEND", "mock")
@@ -28,6 +30,10 @@ class CompletionRequest(BaseModel):
 
 def mock_reply(content: str) -> str:
     return ("[MOCK — NOT MODEL INFERENCE] Received text: " + content[:300])
+
+@app.get("/", include_in_schema=False)
+def playground():
+    return FileResponse(Path(__file__).resolve().parent.parent / "web" / "index.html")
 
 @app.get("/health")
 def health():
