@@ -24,7 +24,7 @@ jobs:
       - name: Install CPU dependencies
         run: python -m pip install -r requirements-cpu.txt
       - name: Unit tests
-        run: python -m pytest -q tests/test_api.py tests/test_runtime.py tests/test_http_runtime.py
+        run: python -m pytest -q tests/test_api.py tests/test_runtime.py tests/test_http_runtime.py tests/test_tpu_factory_auth.py
       - name: Install browser testing dependencies
         run: |
           npm ci
