@@ -26,3 +26,7 @@ at-most-one active inference and shutdown. It does not import JAX on CPU.
 The adapter hasn't yet been fully connected to the FastAPI application;
 the current CPU HTTP API deliberately remains mock-only. Input limits in
 the port match the previous notebook (fixed prefill 256 / target 384).
+
+## CPU HTTP lifecycle validation
+
+FastAPI now provides `create_app(runner_factory=...)` for injected test runners, while the default executable `app` remains strictly mock-only. `lifespan` starts a fake runner once and closes it on shutdown. HTTP readiness, refusal on failed startup (503), and busy rejection (429) are tested in `tests/test_http_runtime.py`. This does not enable a real MaxEngine HTTP service.
