@@ -19,7 +19,11 @@ from fastapi.responses import FileResponse
 from pydantic import BaseModel, Field
 
 from api.runtime import BackendBusy, BackendUnavailable, InferenceRuntime, State
+from api.serving_config import ServingConfig
 
+SERVING_CONFIG = ServingConfig.from_environment()
+if SERVING_CONFIG.mode != "mock":
+    raise RuntimeError("Default ASGI application is mock-only; TPU staging adapter is not qualified")
 BACKEND = os.getenv("QWEN38_BACKEND", "mock")
 if BACKEND != "mock":
     raise RuntimeError("ASGI entrypoint is mock-only until live TPU HTTP acceptance passes")
@@ -31,7 +35,7 @@ class Message(BaseModel):
 class CompletionRequest(BaseModel):
     model: str = "qwen3.8-27b"
     messages: list[Message] = Field(min_length=1, max_length=32)
-    max_tokens: int = Field(default=128, ge=1, le=512)
+    max_tokens: int = Field(default=128, ge=1, le=160)
     temperature: float = Field(default=0.0, ge=0, le=2)
 
 def mock_reply(content: str) -> str:
@@ -127,6 +131,8 @@ def create_app(*, runner_factory: Callable | None = None) -> FastAPI:
         prompt = next((m.content for m in reversed(req.messages) if m.role == "user"), None)
         if not prompt:
             raise HTTPException(status_code=422, detail="A user message is required")
+        if len(prompt) > SERVING_CONFIG.max_prompt_chars:
+            raise HTTPException(status_code=413, detail="Prompt exceeds configured budget")
         if runtime is not None:
             try:
                 result = await runtime.invoke("text", prompt, max_decode_steps=req.max_tokens)
@@ -148,7 +154,7 @@ def create_app(*, runner_factory: Callable | None = None) -> FastAPI:
     async def vision(image: UploadFile = File(...), prompt: str = Form(...)):
         if not prompt.strip():
             raise HTTPException(status_code=422, detail="Prompt must not be blank")
-        if len(prompt) > 16000:
+        if len(prompt) > SERVING_CONFIG.max_prompt_chars:
             raise HTTPException(status_code=422, detail="Prompt too long")
         content_type = image.content_type or ""
         if content_type not in ("image/png", "image/jpeg", "image/webp"):
@@ -168,7 +174,7 @@ def create_app(*, runner_factory: Callable | None = None) -> FastAPI:
                     size += len(chunk)
                     if len(header) < 16:
                         header.extend(chunk[:16 - len(header)])
-                    if size > 8 * 1024 * 1024:
+                    if size > SERVING_CONFIG.max_image_bytes:
                         raise HTTPException(status_code=413, detail="Image exceeds 8 MiB")
                     sink.write(chunk)
             if not size:

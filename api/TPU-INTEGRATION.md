@@ -43,3 +43,15 @@ Set `QWEN38_API_KEY` to require a Bearer token for text and vision endpoints.
 This is an initial CPU authentication gate, not a complete public-facing
 security review (rate limits, headers, ingress policies and secrets management
 still pending).
+
+## CPU configuration safety gate (2026-10-19)
+
+The default ASGI entrypoint is still **mock-only**; `QWEN38_SERVING_MODE=tpu-experimental`
+will refuse to start it. `api/serving_config.py` validates a separate unqualified
+TPU deployment configuration with loopback-only binding, exactly one worker,
+explicit opt-in flags, an API key (at least 24 characters), and strict caps:
+160 output tokens, 4,000 prompt characters and 8 MiB image uploads.
+The default API enforces these request caps even in mock mode. There is **no
+live TPU HTTP serving deployment** in this commit; a dedicated guarded
+TPU ASGI entrypoint, API ingress security audit and real-device acceptance are
+still required. Never set experimental flags on a public tunnel prematurely.
