@@ -6,6 +6,7 @@ tests via create_app(...), but is never enabled by an environment variable.
 from __future__ import annotations
 
 import os
+import secrets
 import tempfile
 import time
 import uuid
@@ -13,7 +14,7 @@ from contextlib import asynccontextmanager
 from pathlib import Path
 from typing import Callable, Literal
 
-from fastapi import FastAPI, File, Form, HTTPException, UploadFile
+from fastapi import Depends, FastAPI, File, Form, Header, HTTPException, UploadFile
 from fastapi.responses import FileResponse
 from pydantic import BaseModel, Field
 
@@ -51,6 +52,17 @@ def _image_signature(header: bytes, content_type: str) -> bool:
         or (content_type == "image/jpeg" and header.startswith(b"\xff\xd8\xff"))
         or (content_type == "image/webp" and header[:4] == b"RIFF" and header[8:12] == b"WEBP")
     )
+
+def require_api_key(authorization: str | None = Header(default=None)) -> None:
+    expected = os.environ.get("QWEN38_API_KEY", "")
+    if not expected:
+        # Local mock mode is allowed without a key. Test runner injection is not
+        # a public server; real TPU serving must require a key before exposure.
+        return
+    supplied = (authorization or "")
+    prefix = "Bearer "
+    if not supplied.startswith(prefix) or not secrets.compare_digest(supplied[len(prefix):], expected):
+        raise HTTPException(status_code=401, detail="Unauthorized", headers={"WWW-Authenticate": "Bearer"})
 
 def create_app(*, runner_factory: Callable | None = None) -> FastAPI:
     """For tests only, supply runner_factory. Default ASGI app never loads a model."""
@@ -110,7 +122,7 @@ def create_app(*, runner_factory: Callable | None = None) -> FastAPI:
             "test_runner_busy": state.get("busy", False),
         }
 
-    @application.post("/v1/chat/completions")
+    @application.post("/v1/chat/completions", dependencies=[Depends(require_api_key)])
     async def chat(req: CompletionRequest):
         prompt = next((m.content for m in reversed(req.messages) if m.role == "user"), None)
         if not prompt:
@@ -132,7 +144,7 @@ def create_app(*, runner_factory: Callable | None = None) -> FastAPI:
             "usage": {"prompt_tokens": None, "completion_tokens": None, "total_tokens": None},
         }
 
-    @application.post("/v1/vision/analyze")
+    @application.post("/v1/vision/analyze", dependencies=[Depends(require_api_key)])
     async def vision(image: UploadFile = File(...), prompt: str = Form(...)):
         if not prompt.strip():
             raise HTTPException(status_code=422, detail="Prompt must not be blank")
