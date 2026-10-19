@@ -1,5 +1,7 @@
 # Qwen3.8-27B on Kaggle TPU v5e-8 — Production Showcase
 
+Repository: https://github.com/dangkhoa2016/Qwen3.8-27B-On-Kaggle-TPU-v5e8
+
 Reproducible model inference examples, test images, deterministic prompts, and pinned asset digests.
 
 ## Source of examples
