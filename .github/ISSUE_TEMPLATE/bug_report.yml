@@ -1,0 +1,15 @@
+name: Bug report / Báo lỗi
+description: Reproducible issue / Sự cố có thể tái lập
+body:
+  - type: textarea
+    id: summary
+    attributes:
+      label: Summary / Tóm tắt
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: Commit SHA, environment, logs / Môi trường và log
+    validations:
+      required: true
