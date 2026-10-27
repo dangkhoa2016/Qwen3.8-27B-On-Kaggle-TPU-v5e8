@@ -1,0 +1,49 @@
+{
+  "cases": [
+    {
+      "id": "photo-office-invoice",
+      "image": "northstar_office_supply_invoice.jpg",
+      "prompt": "Read this office invoice, clearly identifying the supplier, readable line items and total. State any unreadable fields. Keep the answer under 120 words."
+    },
+    {
+      "id": "photo-business-card",
+      "image": "warm_desk_still_life_with_business_card.jpg",
+      "prompt": "Describe the desk and transcribe only clearly visible business card contact information. Mark unreadable details explicitly. Keep the answer under 110 words."
+    },
+    {
+      "id": "photo-daylight-workspace",
+      "image": "cozy_daylight_workspace_with_city_views.jpg",
+      "prompt": "Describe the objects, layout, lighting and outside view of this workspace. Suggest two practical uses supported by the image. Answer under 110 words."
+    },
+    {
+      "id": "photo-ai-farmers-market",
+      "image": "photo_ai_farmers_market_1280x960.png",
+      "title": "Vietnamese vegetable market — customer and vendor",
+      "prompt": "Describe the market scene. Identify the vendor, customer, vegetables and visible handover action. Explain the relationship between people and objects without guessing personal identities, prices, or labels. Answer concisely in no more than 110 words."
+    },
+    {
+      "id": "photo-ai-city-crossing",
+      "image": "photo_ai_city_crossing_1280x960.png",
+      "title": "Busy urban crosswalk — pedestrians and traffic",
+      "prompt": "Describe what is happening at this urban crosswalk. Identify pedestrians, motorcycles, vehicles, road markings and any clearly visible pedestrian signal. Explain two safety considerations based on visible evidence only. Answer concisely in no more than 110 words."
+    },
+    {
+      "id": "photo-ai-vietnamese-meal",
+      "image": "photo_ai_vietnamese_meal_1280x960.png",
+      "title": "Vietnamese meal — noodle soup, spring rolls and drinks",
+      "prompt": "Identify the dishes, accompaniments, condiments and drinks visible on the restaurant table. Describe where the large soup bowl and spring rolls are placed relative to one another. Avoid inventing ingredients that cannot be confirmed visually. Answer in five concise sentences."
+    },
+    {
+      "id": "photo-ai-dog-walking",
+      "image": "photo_ai_dog_walking_1280x960.png",
+      "title": "Dog walking beside a lakeside park path",
+      "prompt": "Describe this park scene and the relationship between the person, dog, leash, path and nearby lake. Identify any other visible park users. Describe the lighting and season only when supported by the image. Answer in no more than 110 words."
+    },
+    {
+      "id": "photo-ai-supermarket",
+      "image": "photo_ai_supermarket_1280x960.png",
+      "title": "Grocery shopping — comparing packaged products",
+      "prompt": "Describe the supermarket aisle and the shopper's visible action. Identify the main product types, shelves, basket and shop layout. Mention label text or prices only if clearly readable. Answer concisely in no more than 110 words."
+    }
+  ]
+}

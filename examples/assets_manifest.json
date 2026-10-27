@@ -20,6 +20,51 @@
       "bytes": 85685
     },
     {
+      "path": "examples/images/photo_ai_city_crossing_1280x960.png",
+      "sha256": "bba573de952942ec97ea6a32c352bdbd3770082b570cfe74520b1cd03b087763",
+      "dimensions": [
+        1280,
+        960
+      ],
+      "bytes": 2206406
+    },
+    {
+      "path": "examples/images/photo_ai_dog_walking_1280x960.png",
+      "sha256": "5ffee19b8a0d8505aa775a5ef5dabb4eba241dbb6e09d5634cfd0eb976271ce8",
+      "dimensions": [
+        1280,
+        960
+      ],
+      "bytes": 2277733
+    },
+    {
+      "path": "examples/images/photo_ai_farmers_market_1280x960.png",
+      "sha256": "14778086dc9f163944f14cc08e4d0ce8c50a8017433530f875f62d9391b06b0c",
+      "dimensions": [
+        1280,
+        960
+      ],
+      "bytes": 2129713
+    },
+    {
+      "path": "examples/images/photo_ai_supermarket_1280x960.png",
+      "sha256": "be608c35af3560268e92265b404fbedfc20e6a2b7eeb3b9acd0bda6c2dc242c1",
+      "dimensions": [
+        1280,
+        960
+      ],
+      "bytes": 2040225
+    },
+    {
+      "path": "examples/images/photo_ai_vietnamese_meal_1280x960.png",
+      "sha256": "5b9f882cb14b058ffa23348bb1ebe191eac77990110302f125492f3c33c1518b",
+      "dimensions": [
+        1280,
+        960
+      ],
+      "bytes": 1910402
+    },
+    {
       "path": "examples/images/vision_2d_city_bike_dashboard.jpg",
       "sha256": "6ff7bef92bd089439492f21ad33768e8aefaeb2d0728ebeded793b3649988562",
       "dimensions": [
