@@ -43,4 +43,4 @@ Delivery Dashboard model output compares 114 Saturday deliveries against 31 Mond
 
 ## Publication boundary
 
-Automated engineering acceptance **PASS** is not equivalent to perfect factual/visual correctness or a completed fresh Run All of the public notebook. A public release still requires portable 38-file support packaging, a reachable examples source, the updated 320/768 Split-Vision notebook, an actual fresh execution, seed/provenance qualification and separate HTTP TPU acceptance if that service is claimed. Avoid stating the current evidence proves any of these pending items.
+Automated engineering acceptance **PASS** is not equivalent to perfect factual/visual correctness or a completed fresh Run All of the public notebook. A public release still requires uploading and attaching the prepared 48-file portable support bundle, an actual fresh execution of the updated 320/768 Split-Vision notebook, seed/provenance qualification and separate HTTP TPU acceptance if that service is claimed. Avoid stating the current evidence proves any of these pending items.

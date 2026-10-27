@@ -26,7 +26,7 @@ Detailed manifest, archive SHA256 values and limitations: [Full19 evidence inven
 
 ## Required gates before the first official production notebook Run All
 
-1. Replace the Git-tracked outdated 256/384 direct-prefill notebook with one coherent **320/768 Split-Vision AOT** notebook derived from the verified candidate, including 448-token limits for Rich/Photography and correctly bounded OCR/Text paths.
+1. The Git-tracked notebook has now been replaced with the **320/768 Split-Vision AOT source**, including Rich/Photography 448-token limits. It still needs CPU portability qualification and a fresh real TPU Run All.
 2. Make all model, 38-file support and 16 image paths usable from **fresh Kaggle-attached resources**. The current evidence used private files in /kaggle/working; their existence in the next clean session is not guaranteed. Avoid anonymous cloning of a Private GitHub repository.
 3. Independently verify file SHA256, JAX/JAXLIB/Transformers versions, one BF16 load and one engine, native sharding/layout correctness checks and cache compatibility. Reject unverified cache entries.
 4. Execute a **fresh notebook** with real token IDs, output text, EOS, per-case and overall timings, concrete device count and status. Preserve failures and partial output; do not claim PASS before measurement.

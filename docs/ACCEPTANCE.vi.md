@@ -26,7 +26,7 @@ Xem [danh mục evidence Full19](FULL19-EVIDENCE.vi.md) để biết checksum, g
 
 ## Các bước bắt buộc trước khi chạy notebook production chính thức
 
-1. Thay notebook Git cũ đang dùng prefill/target **256/384** bằng một notebook **320/768 Split-Vision AOT** đã kiểm tra, Rich Vision/Photography tối đa 448 token, đúng đường xử lý OCR và Text.
+1. Notebook Git đã được thay bằng nguồn **320/768 Split-Vision AOT**, Rich/Photography tối đa 448 token. Vẫn phải kiểm tra khả năng tái lập và thực hiện fresh Run All TPU.
 2. Bảo đảm checkpoint, **38 tệp support** và **16 ảnh** đều có thể attach và đọc được trong phiên Kaggle mới. Lượt nghiệm thu trước sử dụng file private trong /kaggle/working, không bảo đảm còn nguyên trong fresh session. Không phụ thuộc clone ẩn danh từ GitHub Private.
 3. Xác minh SHA256, phiên bản JAX/JAXLIB/Transformers, duy nhất một lần nạp BF16/MaxEngine, các kiểm tra sharding/layout thật của JAX và tính tương thích cache.
 4. Chạy notebook mới, lưu token IDs, output, EOS, thời gian từng case/toàn bộ, số TPU devices và trạng thái. Giữ lại bằng chứng lỗi nếu có, không ghi PASS trước khi đủ dữ liệu.

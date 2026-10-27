@@ -21,6 +21,6 @@ TPU v5e-8 ×8, MaxText/JAX 0.11.0, một MaxEngine
 Tùy chọn: TPU ASGI phải nghiệm thu riêng trước khi public
 ```
 
-Notebook Git hiện còn đường direct-prefill 256/384 cũ, không tương đương với candidate Split-Vision đã PASS. Phải thay và nghiệm thu mới trước official Run All.
+Notebook Git đã được thay bằng nguồn Split-Vision 320/768 và chưa được fresh TPU nghiệm thu chính thức.
 
 [Nghiệm thu](ACCEPTANCE.vi.md) · [Tái lập](REPRODUCIBILITY.vi.md) · [Bằng chứng](FULL19-EVIDENCE.vi.md).

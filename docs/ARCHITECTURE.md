@@ -22,6 +22,6 @@ CPU-only: Vue CDN → FastAPI mock → contract tests [separate, not real Qwen i
 Optional: TPU ASGI entrypoint → unqualified until independent live acceptance
 ```
 
-The currently checked-in older notebook uses a different direct-prefill 256/384 code path. It must be replaced and verified before official Run All, not silently treated as equivalent to the accepted private candidate.
+The checked-in notebook has been replaced by the Split-Vision 320/768 source. It remains unexecuted in a fresh production run, and should not be described as officially qualified.
 
 [Acceptance](ACCEPTANCE.md) · [Reproducibility](REPRODUCIBILITY.md) · [Evidence](FULL19-EVIDENCE.md).

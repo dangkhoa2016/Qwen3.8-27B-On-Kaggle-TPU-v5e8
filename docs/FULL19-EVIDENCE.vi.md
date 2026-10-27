@@ -43,4 +43,4 @@ Dashboard so sánh 114 đơn Thứ Bảy với 31 đơn Thứ Hai là “gần g
 
 ## Giới hạn công bố
 
-**PASS kiểm tra tự động** không có nghĩa ảnh và phép tính đều đúng hoàn hảo; cũng chưa phải fresh Run All của notebook Git public. Trước khi phát hành cần chuẩn hóa bộ support 38 file để attach, đường dẫn nguồn ảnh có thể truy cập, notebook Split-Vision 320/768, chạy thật notebook mới, chứng minh provenance/RNG và nghiệm thu HTTP TPU riêng nếu có tuyên bố triển khai dịch vụ.
+**PASS kiểm tra tự động** không có nghĩa ảnh và phép tính đều đúng hoàn hảo; cũng chưa phải fresh Run All của notebook Git public. Trước khi phát hành cần upload/attach bundle 48 mục đã đóng gói, chạy thật notebook Split-Vision 320/768 mới, chứng minh provenance/RNG và nghiệm thu HTTP TPU riêng nếu có tuyên bố triển khai dịch vụ.

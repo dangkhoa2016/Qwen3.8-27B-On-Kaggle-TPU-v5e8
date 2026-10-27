@@ -19,7 +19,7 @@ The **19/19 automated Full19 result** from 27 October 2026 was recorded on a rea
 
 ## Current blockers
 
-- The Git-tracked notebook still follows the older 256/384 direct-image-prefill path and must be updated and CPU-preflighted.
+- The Git-tracked notebook has been replaced with a 320/768 Split-Vision source; the current candidate has not passed a fresh TPU Run All.
 - The model mirror is attached on the current Kaggle environment, but the approved private 38-file support folder has **not** been verified as a fresh `/kaggle/input` dataset mount.
 - Repository visibility is currently Private; the old notebook's anonymous Git example checkout must be replaced or a public immutable revision prepared first.
 - The private experimental runner and evidence have **not** yet been moved to one self-contained official reproducible notebook.

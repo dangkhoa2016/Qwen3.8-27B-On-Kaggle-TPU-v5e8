@@ -19,7 +19,7 @@ Kết quả Full19 **19/19 đạt kiểm tra tự động** ngày 27/10/2026 đ�
 
 ## Blocker hiện tại
 
-- Notebook Git cũ còn đường prefill ảnh trực tiếp và 256/384; cần thay mới và kiểm tra CPU.
+- Notebook Git đã được thay bằng nguồn Split-Vision 320/768, nhưng chưa có kết quả fresh Run All TPU.
 - Bộ support 38 file đang ở thư mục private /kaggle/working, chưa xác minh có mặt tại mount dataset mới.
 - Repository đang Private; lệnh clone Git ẩn danh từ notebook cũ không phù hợp.
 - Chưa hợp nhất runner/evidence riêng thành một notebook production có thể fresh Run All.
