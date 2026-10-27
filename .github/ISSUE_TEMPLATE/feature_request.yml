@@ -1,0 +1,9 @@
+name: Feature request / Đề xuất
+description: Suggest an improvement / Đề xuất cải tiến
+body:
+  - type: textarea
+    id: idea
+    attributes:
+      label: Goal and acceptance criteria / Mục tiêu và tiêu chí
+    validations:
+      required: true
