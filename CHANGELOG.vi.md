@@ -1,13 +1,12 @@
-# Changelog
+# Nhật ký thay đổi
 
-> 🌐 Ngôn ngữ / Language: [English](CHANGELOG.md) | **Tiếng Việt**
+> [English](CHANGELOG.md) | **Tiếng Việt**
 
-## Chưa phát hành — quản trị và nguồn gốc
-- Bổ sung tài liệu song ngữ, MIT cho mã dự án và Apache-2.0 cho mô hình Qwen.
-- Giữ nguyên notebook/evidence đã thực thi; không tuyên bố HTTP TPU đã PASS.
-- Giữ các bài kiểm thử CPU mock/browser và cổng TPU thử nghiệm.
+## Chưa phát hành — chuẩn bị công bố (27/10/2026)
+- Đồng bộ bộ ảnh Git thành **16 ảnh** được xác minh SHA256 và đã dùng trong Full19 experimental, thêm manifest Photography và năm ảnh AI.
+- Ghi rõ Full19 Split-Vision BF16 đã **PASS 19/19 kiểm tra tự động** trên TPU thật trong 1.160,844 giây; không tuyên bố notebook public fresh Run All hay HTTP TPU đã nghiệm thu.
+- Giữ lại lỗi đã xác nhận: Invoice đọc 8%/$69.28 thành 5%/$66.28 trong Full19 và cả hai lượt greedy; Dashboard mô tả sai tỷ lệ 114/31 là gần gấp đôi.
+- Chỉ rõ blocker trước công bố: notebook Git còn cũ, clone GitHub Private và chưa có gói support đủ khả năng attach trên phiên mới.
 
-## 18–19/10/2026 — quá trình phát triển
-- Ví dụ ghim commit Git, ảnh hiển thị đúng kích thước, CPU API mock và UI.
-- Adapter MaxEngine, vòng đời và kiểm tra TPU được chia thành các commit nhỏ.
-- Giữ timestamp quan sát được của commit lịch sử; tài liệu mới ghi thời điểm tạo thật.
+## 19/10/2026 — nhập repository
+- Snapshot Git ban đầu đưa chung notebook, CPU API mock, Vue playground, tests, license/governance và README hai ngôn ngữ vào **một root commit**. Không coi snapshot này là chuỗi commit tính năng đã kiểm chứng.
