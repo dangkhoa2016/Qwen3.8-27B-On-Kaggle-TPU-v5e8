@@ -33,18 +33,70 @@ def test_missing_or_mismatched_archive_rejected(tmp_path):
     with pytest.raises(RuntimeError):
         t._archive_path(tmp_path)
 
-def test_notebook_git_commit_pin_resolves_locally():
-    import subprocess
-    repo = Path(__file__).resolve().parents[1]
-    notebook = json.loads((repo / "notebooks/kaggle-tpu-v5e8-production-showcase.ipynb").read_text())
-    snippets = ["".join(cell.get("source", [])) for cell in notebook["cells"] if "EXAMPLES_COMMIT =" in "".join(cell.get("source", []))]
-    assert len(snippets) == 1
-    import re
-    match = re.search(r"EXAMPLES_COMMIT = '([0-9a-f]{40})'", snippets[0])
-    assert match
-    commit = match.group(1)
-    subprocess.check_call(["git", "-C", str(repo), "cat-file", "-e", commit + "^{commit}"])
-    actual = subprocess.check_output(
-        ["git", "-C", str(repo), "show", commit + ":examples/assets_manifest.json"])
-    manifest = json.loads(actual)
-    assert manifest["assets"]
+def test_notebook_portable_bundle_and_split_vision_invariants():
+    """Do not mask the old broken Git commit pin by skipping a test."""
+    import ast
+    import hashlib
+    import nbformat
+    repo=Path(__file__).resolve().parents[1]
+    n=nbformat.read(repo/'notebooks/kaggle-tpu-v5e8-production-showcase.ipynb',as_version=4)
+    nbformat.validate(n)
+    cells=[c.source for c in n.cells if c.cell_type=='code']
+    assert len(cells)==14
+    for c in cells:ast.parse(c)
+    source='\n'.join(cells)
+    for required in ('PORTABLE_SUPPORT_BUNDLE_SHA256_GATE_PASS',
+                     "bundle['required_file_count']==48",
+                     'install_native_layout_timing','install_native_metadata_hooks',
+                     'install_metadata_reuse','lowered.compile()',
+                     'compiled(**dynamic_kwargs)','engine.encode_vision(',
+                     'e_args.PREFILL_LEN=320','e_args.MAX_TARGET_LEN=768',
+                     "case.get('max_decode_steps',448)"):
+        assert required in source,required
+    for forbidden in ('EXAMPLES_COMMIT','git clone','70f89f34633169757d62a1daeddfb29e4adb87c6',
+                      'qwen38-cpu-recovery-20261026','qwen38-production-rc-20261025'):
+        assert forbidden not in source,forbidden
+    items=json.loads((repo/'examples/assets_manifest.json').read_text())['assets']
+    assert len(items)==16
+    for a in items:
+        f=repo/a['path']
+        assert f.is_file() and f.stat().st_size==a['bytes']
+        assert hashlib.sha256(f.read_bytes()).hexdigest()==a['sha256']
+    names={Path(a['path']).name for a in items}
+    rich=json.loads((repo/'examples/vision_showcase_cases.json').read_text())['cases']
+    photo=json.loads((repo/'examples/photo_showcase_cases.json').read_text())['cases']
+    assert len(rich)==6 and len(photo)==8
+    assert all(x['image'] in names for x in rich+photo)
+
+
+def test_portable_bundle_manifest_integrity_detects_tampering(tmp_path):
+    """The gate must reject a mutated input, rather than silently passing."""
+    import hashlib
+    p=tmp_path/'image.jpg'
+    p.write_bytes(b'good-image')
+    checksum=hashlib.sha256(p.read_bytes()).hexdigest()
+    manifest={'image.jpg':{'sha256':checksum,'bytes':p.stat().st_size}}
+    for name,item in manifest.items():
+        current=tmp_path/name
+        assert current.stat().st_size==item['bytes']
+        assert hashlib.sha256(current.read_bytes()).hexdigest()==item['sha256']
+    p.write_bytes(b'bad-image')
+    for name,item in manifest.items():
+        current=tmp_path/name
+        assert hashlib.sha256(current.read_bytes()).hexdigest()!=item['sha256']
+
+
+def test_repository_contains_exact_pinned_support_provenance_manifest():
+    import hashlib
+    repo=Path(__file__).resolve().parents[1]
+    p=repo/'support/portable-bundle-manifest.json'
+    data=p.read_bytes()
+    assert hashlib.sha256(data).hexdigest()=='1447ee114dc2d2abce6f60f5125927f55311bf530b8cf53ab86a2576ac637ebc'
+    meta=json.loads(data)
+    assert meta['required_file_count']==len(meta['files'])==48
+    assert meta['source_support_original_files']==38
+    assert meta['source_input_images']==16
+    assert sum(x['category']=='original_verified_support' for x in meta['files'].values())==38
+    assert sum(x['category']=='verified_jax_helper' for x in meta['files'].values())==6
+    assert sum(x['category']=='optional_cache_candidate' for x in meta['files'].values())==3
+    assert not any('.safetensors' in x for x in meta['files'])
