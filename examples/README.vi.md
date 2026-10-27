@@ -1,0 +1,41 @@
+# Khám phá 16 ảnh nguồn Text + Vision
+
+> 🌐 Ngôn ngữ / Language: [English](README.md) | **Tiếng Việt**
+
+Đây là **ảnh đưa vào Qwen3.8-27B để kiểm thử**, không phải ảnh Qwen tạo ra. Bộ ảnh giúp khám phá OCR số, suy luận từ sơ đồ, nhận diện vật thể, mô tả đời sống và các chi tiết an toàn hình ảnh.
+
+## Có những nhóm ảnh nào?
+
+| Nhóm | Số ảnh | Nội dung |
+|---|---:|---|
+| Thẻ OCR số | 2 | Đọc số in **731**, **482** |
+| Rich Vision | 6 | Mô tả cảnh 2D/3D có nhiều vật thể và quan hệ |
+| Photography | 8 | Món ăn, chợ, góc làm việc, đường phố và các cảnh khác |
+| **Tổng** | **16** | Kết hợp 3 prompt Text để thành Full19 |
+
+Có năm nguồn Photography là **ảnh minh họa do AI tạo**. Không giới thiệu toàn bộ tập ảnh là ảnh máy ảnh thực.
+
+## Xem ảnh và prompt
+
+- [Tên file, kích thước, dung lượng, SHA256](assets_manifest.json)
+- [Prompt Rich Vision](vision_showcase_cases.json)
+- [Prompt Photography](photo_showcase_cases.json)
+- [Hướng dẫn đọc output](../docs/FULL19-EVIDENCE.vi.md)
+
+Mỗi ảnh được nhận diện bằng **SHA256**, không chỉ bằng tên file. Ảnh nguồn có thể là 1280 × 960 hoặc kích thước khác theo manifest, còn pipeline inference resize về **512 × 384**. SHA256 nguồn thuộc **file gốc**, không phải tensor ảnh sau resize.
+
+## Ví dụ: cảnh qua đường
+
+[Ảnh crossing hiện tại](images/photo_ai_city_crossing_1280x960.png) có **đèn người đi bộ xanh**, người ở vạch zebra và phương tiện phía sau. SHA256 là:
+
+`ed532c2ba4e7eace4a81e4adfd6867c68f244fe4d64293f2bbfd1097ad7d0356`
+
+Lượt experimental trước dùng **ảnh đèn đỏ khác**, nên output không thể được dùng để chấm ảnh đèn xanh mới. Ảnh Git đã được kiểm SHA256, nhưng kết quả TPU cho ảnh này chỉ hợp lệ sau khi chạy lại với input và manifest tương ứng.
+
+Xem [so sánh phiên bản ảnh](RELEASE-IMAGE-REVIEW.vi.md) để hiểu vì sao provenance ảnh rất quan trọng trong benchmark.
+
+## Đánh giá ví dụ công bằng
+
+Đối chiếu pixel gốc và prompt trước khi chấm. Với số liệu, kiểm cả giá trị và quan hệ; với giao thông, kiểm trạng thái và hướng đèn. Giữ cả những câu trả lời sai—19 EOS hoàn thành không đồng nghĩa 19 mô tả hình ảnh hoàn hảo.
+
+[Chạy notebook](../docs/REPRODUCIBILITY.vi.md) · [Hướng dẫn đánh giá](../docs/ACCEPTANCE.vi.md)

@@ -1,0 +1,69 @@
+{
+  "schema_version": 1,
+  "purpose": "public_release_scene_review",
+  "scope": "git_source_candidate_requires_new_release_dataset",
+  "development_full19_source_and_evidence": "archived_files_unchanged",
+  "current_source": {
+    "case_id": "photo-ai-city-crossing",
+    "filename": "photo_ai_city_crossing_1280x960.png",
+    "sha256": "bba573de952942ec97ea6a32c352bdbd3770082b570cfe74520b1cd03b087763",
+    "source_width": 1280,
+    "source_height": 960,
+    "current_label": "historical_20261027_experimental_evidence_only",
+    "release_eligibility": "ARCHIVED_NO_SILENT_REUSE",
+    "visual_finding": "Red pedestrian signal is illuminated while many pedestrians occupy the zebra crossing with vehicles close behind.",
+    "model_output_finding": "Real experimental Qwen response correctly flagged the red do-not-walk signal and pedestrian/vehicle conflict; this is not an established model failure.",
+    "archived_evidence_zip": "Qwen38-Full19-SplitVision-Extended448-TPU-AutomatedPass-QA-Pending-Evidence-20261027.zip",
+    "archived_evidence_case": "full19_final.json: photo-ai-city-crossing"
+  },
+  "replacement": {
+    "status": "USER_SELECTED_GIT_CANDIDATE_PENDING_TPU",
+    "approved": false,
+    "expected_model_family": "Mage-Flow-Turbo",
+    "candidate_filename": "photo_ai_city_crossing_1280x960.png",
+    "candidate_sha256": "ed532c2ba4e7eace4a81e4adfd6867c68f244fe4d64293f2bbfd1097ad7d0356",
+    "candidate_seed": null,
+    "candidate_generated_at_utc": null,
+    "target_dimensions": [
+      1280,
+      960
+    ],
+    "required_visual_ground_truth": [
+      "Clearly illuminated green walking-person signal facing the crosswalk",
+      "Pedestrians walking within a marked zebra crossing",
+      "Cars and motorcycles stationary behind their stop line",
+      "No conflicting red do-not-walk symbol visible",
+      "No vehicles occupying the zebra crossing"
+    ],
+    "release_gates": [
+      "Visual human approval of full-size generated image and traffic logic",
+      "Image metadata and SHA256 recorded, prompt/seed and generator version recorded",
+      "Photo manifest updated only in a separate release candidate",
+      "All affected manifests, notebook mounts and bundle digests rebuilt consistently",
+      "Full19 fresh real TPU inference and review repeated on that release dataset"
+    ],
+    "candidate_bytes": 2014511,
+    "candidate_dimensions": [
+      1280,
+      960
+    ],
+    "original_upload_filename": "photo_ai_city_crossing_1280x960.png",
+    "original_upload_sha256": "63a61fd4ed5788ca156313b0ee7b2335e898b2e7ed7f683a725bb1d836c5395d",
+    "original_upload_dimensions": [
+      1448,
+      1086
+    ],
+    "transformation": "Deterministic Pillow Lanczos downsample from 1448x1086 to 1280x960; original upload untouched",
+    "generation_model_and_prompt": "NOT_VERIFIED_FROM_UPLOADED_FILE",
+    "selection_note": "User supplied and explicitly requested insertion into the existing Git image commit; pending model inference and release acceptance"
+  },
+  "release_allowed": false,
+  "development_private_support_dataset": "unchanged_old_sha256",
+  "release_gates_status": {
+    "image_file_replaced_in_git_source": "DONE_PENDING_HISTORY_REWRITE",
+    "original_full19_evidence_preserved": "YES",
+    "private_kaggle_support_dataset_updated": "NO",
+    "new_release_dataset_created": "NO",
+    "fresh_tpu_inference_completed": "NO"
+  }
+}
