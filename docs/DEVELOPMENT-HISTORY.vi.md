@@ -9,3 +9,5 @@ Các thay đổi tiếp theo cần chia thành commit đúng phạm vi, có auth
 Chỉ tái cấu trúc root commit thành các commit theo chức năng khi đã duyệt một kế hoạch rewrite riêng, kiểm chứng được bản backup và đồng bộ ref remote. Không force-push lên `main` hoặc nói đã có backup branch nếu chưa kiểm chứng.
 
 Xem [nghiệm thu](ACCEPTANCE.vi.md), [tái lập](REPRODUCIBILITY.vi.md), [bằng chứng Full19](FULL19-EVIDENCE.vi.md).
+
+Các nhánh backup remote đã được xác minh; xem [báo cáo Git history](GIT-HISTORY-AUDIT.vi.md) để biết khác biệt và rủi ro khi chuyển Public.

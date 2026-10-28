@@ -20,9 +20,9 @@ Kết quả Full19 **19/19 đạt kiểm tra tự động** ngày 27/10/2026 đ�
 ## Blocker hiện tại
 
 - Notebook Git đã được thay bằng nguồn Split-Vision 320/768, nhưng chưa có kết quả fresh Run All TPU.
-- Bộ support 38 file đang ở thư mục private /kaggle/working, chưa xác minh có mặt tại mount dataset mới.
-- Repository đang Private; lệnh clone Git ẩn danh từ notebook cũ không phù hợp.
-- Chưa hợp nhất runner/evidence riêng thành một notebook production có thể fresh Run All.
+- Bộ support portable 48 mục (gồm 38 file gốc) đã được tạo và kiểm SHA256; nhưng **chưa upload/attach phiên bản Kaggle Dataset mới** để xác minh mount.
+- GitHub còn Private. **Notebook mới không clone GitHub**, chỉ sử dụng nguồn model và support đã attach.
+- Đã chuẩn bị **một notebook nguồn production** và CPU bootstrap PASS; chưa chạy fresh TPU Run All trên đủ 8 thiết bị.
 - HTTP TPU thật chưa nghiệm thu end-to-end.
 
 Kết quả experimental Full19 đã có không bị xóa hoặc gắn nhãn thành fresh run.

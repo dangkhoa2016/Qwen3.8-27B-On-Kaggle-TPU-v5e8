@@ -9,3 +9,5 @@ Subsequent changes should use focused commits with accurate, actual author/commi
 The initial root commit will only be split into reconstructed logical commits if an authorized, separately verified history migration is approved; that operation changes commit hashes and requires remote reference synchronization. Do not rewrite `main`, force-push or claim a backup branch exists without independent verification.
 
 Release readiness and provenance: [Acceptance](ACCEPTANCE.md), [Reproducibility](REPRODUCIBILITY.md), [Full19 evidence](FULL19-EVIDENCE.md).
+
+Remote backup branches have now been verified; see the [Git history audit](GIT-HISTORY-AUDIT.md) for tree differences and public-release risks.

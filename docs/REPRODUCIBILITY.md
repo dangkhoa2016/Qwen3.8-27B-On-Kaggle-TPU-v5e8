@@ -20,9 +20,9 @@ The **19/19 automated Full19 result** from 27 October 2026 was recorded on a rea
 ## Current blockers
 
 - The Git-tracked notebook has been replaced with a 320/768 Split-Vision source; the current candidate has not passed a fresh TPU Run All.
-- The model mirror is attached on the current Kaggle environment, but the approved private 38-file support folder has **not** been verified as a fresh `/kaggle/input` dataset mount.
-- Repository visibility is currently Private; the old notebook's anonymous Git example checkout must be replaced or a public immutable revision prepared first.
-- The private experimental runner and evidence have **not** yet been moved to one self-contained official reproducible notebook.
+- The 48-entry portable offline-support bundle has been prepared and SHA256-verified (including the original 38 support files), but a **new Kaggle Dataset attachment and mount verification** are still pending.
+- GitHub is Private. The **new notebook no longer clones this repository**; it consumes verified attached model and support resources.
+- The **single production source notebook** is prepared and has passed CPU bootstrap; a fresh 8-device TPU Run All has not yet happened.
 - Real TPU HTTP serving is out of scope until separate end-to-end acceptance.
 
 The previously completed experimental evidence is not erased or relabeled as fresh execution.
