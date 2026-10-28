@@ -30,9 +30,7 @@ The current source image [city crossing](images/photo_ai_city_crossing_1280x960.
 
 `ed532c2ba4e7eace4a81e4adfd6867c68f244fe4d64293f2bbfd1097ad7d0356`
 
-An earlier experimental run used a **different red-signal source**. Its response cannot be applied to the new green-signal image. The Git image is checksum-verified, but any TPU result for this image requires new execution with matching input and manifest hashes.
-
-[Read the input comparison](RELEASE-IMAGE-REVIEW.md) for a concrete illustration of how image versions affect benchmark provenance.
+See [image provenance and evaluation guidance](IMAGE-PROVENANCE.md). The SHA256 identifies input bytes; inference results require a corresponding TPU execution record.
 
 ## Using the examples responsibly
 

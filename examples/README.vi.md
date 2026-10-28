@@ -30,9 +30,7 @@ Mỗi ảnh được nhận diện bằng **SHA256**, không chỉ bằng tên f
 
 `ed532c2ba4e7eace4a81e4adfd6867c68f244fe4d64293f2bbfd1097ad7d0356`
 
-Lượt experimental trước dùng **ảnh đèn đỏ khác**, nên output không thể được dùng để chấm ảnh đèn xanh mới. Ảnh Git đã được kiểm SHA256, nhưng kết quả TPU cho ảnh này chỉ hợp lệ sau khi chạy lại với input và manifest tương ứng.
-
-Xem [so sánh phiên bản ảnh](RELEASE-IMAGE-REVIEW.vi.md) để hiểu vì sao provenance ảnh rất quan trọng trong benchmark.
+Xem [provenance ảnh và điều kiện đánh giá](IMAGE-PROVENANCE.vi.md). SHA256 xác định dữ liệu đầu vào; kết quả suy luận cần hồ sơ chạy TPU tương ứng.
 
 ## Đánh giá ví dụ công bằng
 

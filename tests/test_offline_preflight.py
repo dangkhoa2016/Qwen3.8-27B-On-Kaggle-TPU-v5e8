@@ -34,7 +34,7 @@ def test_missing_or_mismatched_archive_rejected(tmp_path):
         t._archive_path(tmp_path)
 
 def test_notebook_portable_bundle_and_split_vision_invariants():
-    """Do not mask the old broken Git commit pin by skipping a test."""
+    """Verify source notebook invariants independently of TPU availability."""
     import ast
     import hashlib
     import nbformat
@@ -91,14 +91,15 @@ def test_repository_contains_exact_pinned_support_provenance_manifest():
     repo=Path(__file__).resolve().parents[1]
     p=repo/'support/portable-bundle-manifest.json'
     data=p.read_bytes()
-    assert hashlib.sha256(data).hexdigest()=='1447ee114dc2d2abce6f60f5125927f55311bf530b8cf53ab86a2576ac637ebc'
+    assert hashlib.sha256(data).hexdigest()=='cf5343f614eb32ff9234c870e4a26093f9f07e62199ee90396d516a804eb8a28'
     meta=json.loads(data)
     assert meta['required_file_count']==len(meta['files'])==48
-    assert meta['source_support_original_files']==38
+    assert meta['support_file_count']==38
     assert meta['source_input_images']==16
-    assert sum(x['category']=='original_verified_support' for x in meta['files'].values())==38
-    assert sum(x['category']=='verified_jax_helper' for x in meta['files'].values())==6
-    assert sum(x['category']=='optional_cache_candidate' for x in meta['files'].values())==3
+    assert sum(x['category']=='runtime_support' for x in meta['files'].values())==36
+    assert sum(x['category']=='visual_input' for x in meta['files'].values())==2
+    assert sum(x['category']=='jax_helper' for x in meta['files'].values())==6
+    assert sum(x['category']=='optional_compilation_cache' for x in meta['files'].values())==3
     assert not any('.safetensors' in x for x in meta['files'])
 
 
