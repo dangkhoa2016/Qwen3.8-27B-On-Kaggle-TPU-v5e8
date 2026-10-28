@@ -10,7 +10,7 @@
 ![Kaggle TPU v5e-8](https://img.shields.io/badge/Accelerator-TPU_v5e--8-blue)
 ![BF16 gốc](https://img.shields.io/badge/Checkpoint-Original_BF16-purple)
 
-Dự án tìm hiểu cách chạy **Qwen3.8-27B BF16 nguyên gốc từ [Kaggle Model mirror](https://www.kaggle.com/models/dangkhoa2016/qwen-qwen3-8-27b)**, trên **tám thiết bị Kaggle TPU v5e** bằng JAX và MaxText đã điều chỉnh. Khi thực thi, notebook nạp checkpoint được attach từ Kaggle, không tải trực tiếp từ đường dẫn Hugging Face. Repository gồm bằng chứng suy luận thực nghiệm, bộ thử Full19 Text+Vision, notebook được quản lý trong Git, FastAPI/Vue Playground và phương pháp đánh giá có thể tái lập.
+Dự án tìm hiểu cách chạy **Qwen3.8-27B BF16 nguyên gốc từ [Kaggle Model mirror](https://www.kaggle.com/models/dangkhoa2016/qwen-qwen3-8-27b)**, trên **tám thiết bị Kaggle TPU v5e** bằng JAX và MaxText đã điều chỉnh. Khi thực thi, notebook nạp checkpoint được attach từ Kaggle, không tải trực tiếp từ đường dẫn Hugging Face. Repository gồm kết quả suy luận TPU đã đo, notebook 19 case Text + Vision, CPU Playground FastAPI/Vue và tài liệu kiểm chứng dữ liệu, đánh giá kết quả.
 
 Mục tiêu là chia sẻ **kiến thức thực tiễn về triển khai mô hình lớn trên TPU**: fusion đa phương thức, AOT prefill, kiểm toàn vẹn input, đo hiệu năng và diễn giải kết quả một cách chính xác.
 
@@ -21,7 +21,7 @@ Mục tiêu là chia sẻ **kiến thức thực tiễn về triển khai mô h�
 | Hiểu inference đa phương thức TPU | Từ ảnh tới token, MRoPE và kiểm JAX/XLA | [Kiến trúc](docs/ARCHITECTURE.vi.md) |
 | Thử API không cần TPU | FastAPI + Vue CDN mock và tests | [Chạy CPU](#thử-cpu-playground) |
 | Khám phá bộ ví dụ | 16 ảnh SHA256 và 19 case | [Bộ ảnh](examples/README.vi.md) |
-| Tái lập lượt chạy TPU | Model BF16, support offline, notebook | [Hướng dẫn](docs/REPRODUCIBILITY.vi.md) |
+| Chạy notebook trên TPU | Model BF16, support offline, notebook | [Hướng dẫn](docs/REPRODUCIBILITY.vi.md) |
 | Đánh giá chất lượng model | OCR, image reasoning, output thật và lỗi | [Đánh giá](docs/ACCEPTANCE.vi.md) |
 | Hiểu số đo hiệu năng | Một lượt đo thật, cold/warm và giới hạn | [Hiệu năng](docs/PERFORMANCE-ANALYSIS.vi.md) |
 
@@ -36,22 +36,22 @@ Mục tiêu là chia sẻ **kiến thức thực tiễn về triển khai mô h�
 
 Prompt, kích thước và SHA256 nằm trong [manifest 16 ảnh](examples/assets_manifest.json) và [hướng dẫn bộ ảnh](examples/README.vi.md).
 
-## Kết quả từ lượt chạy TPU thật
+## Số đo suy luận trên tám thiết bị TPU
 
-Ngày **27/10/2026**, runner Split-Vision experimental đã thực hiện Full19 trên phần cứng Kaggle TPU v5e-8 thật:
+Một phiên Kaggle TPU v5e-8 thực tế ngày **27/10/2026** đã ghi nhận:
 
-| Chỉ số | Kết quả đã ghi |
+| Chỉ số | Kết quả |
 |---|---|
-| Model | 27B BF16 gốc, **18 shard safetensors**, 1.199 tensor |
-| TPU | Tám thiết bị v5e, một MaxEngine, một lần nạp trọng số |
-| Case | **3 Text + 2 OCR + 6 Rich Vision + 8 Photography = 19** |
-| Hoàn thành tự động | **19/19 case có EOS** |
-| Kiểm tra cụ thể | Text 3/3; OCR số **731**, **482**; Rich Vision **55/55** keyword |
-| Tổng thời gian | **1.160,844 giây = 19 phút 20,844 giây** |
+| Checkpoint | Qwen3.8-27B BF16 gốc, **18 safetensors shard** |
+| Phần cứng | Tám v5e, một MaxEngine và một lần nạp checkpoint |
+| Khối lượng | **3 Text + 2 OCR + 6 Rich Vision + 8 Photography = 19 case** |
+| Hoàn tất sinh token | **19/19 case có EOS** |
+| Một số phép kiểm | Text 3/3, OCR số **731 / 482**, Rich Vision **55/55** từ khóa |
+| Tổng thời gian | **1.160,844 giây (19 phút 20,844 giây)** |
 
-**Ý nghĩa:** mô hình thật đã sinh output cho các case này. Nhưng **không có nghĩa mọi câu trả lời đều đúng** hoặc HTTP TPU đã được benchmark. Trong output gốc, model đọc thuế invoice **8% / $69.28** thành **5% / $66.28**, và mô tả **114 so với 31** là “gần gấp đôi”. Những lỗi này được giữ nguyên để cộng đồng học hỏi và kiểm chứng.
+**Cách hiểu:** số đo gắn với SHA256 input và runtime của phiên được ghi nhận, không đại diện cho độ chính xác tổng quát hoặc chứng minh mọi revision notebook đều đã chạy. Một số output có lỗi số liệu (thuế hóa đơn và so sánh dashboard); tài liệu giữ nguyên các lỗi để đánh giá.
 
-Xem [bằng chứng Full19](docs/FULL19-EVIDENCE.vi.md), [bài học lỗi](docs/FAILURE-ANALYSIS.vi.md) và [cách đọc benchmark](docs/PERFORMANCE-ANALYSIS.vi.md).
+Xem [bằng chứng Full19](docs/FULL19-EVIDENCE.vi.md), [phân tích hành vi mô hình](docs/FAILURE-ANALYSIS.vi.md) và [hiệu năng](docs/PERFORMANCE-ANALYSIS.vi.md).
 
 ## Thử CPU Playground
 
@@ -73,15 +73,15 @@ npx playwright install chromium
 npm run test:e2e
 ```
 
-Mã nguồn mới nhất đã được kiểm **36 Python PASS, 1 SKIP** và **hai Playwright PASS**. Xem [tài liệu API](api/README.vi.md) để biết endpoints và điều kiện validate.
+Mã nguồn mới nhất đã được kiểm **38 Python PASS, 1 SKIP** và **hai Playwright PASS**. Xem [tài liệu API](api/README.vi.md) để biết endpoints và điều kiện validate.
 
-## Chạy BF16 gốc trên TPU
+## Chạy notebook BF16 Text + Vision trên TPU
 
-[Notebook nguồn Full19](notebooks/kaggle-tpu-v5e8-production-showcase.ipynb) mô tả một engine 27B, ảnh suy luận **512 × 384**, **prefill 320 token**, **target 768 token**, native JAX/XLA sharding checks và evidence token từng case.
+[Notebook Full19 trong Git](notebooks/kaggle-tpu-v5e8-production-showcase.ipynb) sử dụng **một MaxEngine**, Vision encoder tách riêng, JAX/XLA prefill, tensor ảnh **512 × 384**, **prefill 320 token** và **target 768 token**.
 
-Model và runtime support là **hai input Kaggle attach riêng**. Một số tài nguyên đang **Private và cần được cấp quyền truy cập** trong quá trình review giấy phép/phát hành. Xem [hướng dẫn tái lập](docs/REPRODUCIBILITY.vi.md) và [tài nguyên offline](docs/OFFLINE-SUPPORT.vi.md); không ghép nhầm manifest Dataset và notebook.
+Trên Kaggle, chọn **TPU v5e-8** và attach cả [BF16 model mirror](https://www.kaggle.com/models/dangkhoa2016/qwen-qwen3-8-27b) lẫn [Full19 support Dataset](https://www.kaggle.com/datasets/dangkhoa2016/qwen38-27b-tpu-v5e8-full19-runtime-support). Notebook kiểm tra manifest 48 file với SHA256 `cf5343f614eb32ff9234c870e4a26093f9f07e62199ee90396d516a804eb8a28` trước khi nạp trọng số.
 
-Ảnh crossing đèn xanh hiện có trong Git mang SHA256 khác ảnh dùng cho kết quả Full19 experimental trước đó. Hãy tham khảo [notebook Full19 trong Git](notebooks/kaggle-tpu-v5e8-production-showcase.ipynb) và [hướng dẫn tái lập](docs/REPRODUCIBILITY.vi.md); các output thực nghiệm trước đây **không** chứng minh ảnh crossing mới đã được nghiệm thu trên TPU.
+Làm theo [hướng dẫn thực thi](docs/REPRODUCIBILITY.vi.md) và [tài nguyên offline](docs/OFFLINE-SUPPORT.vi.md). Quyền truy cập tài nguyên và giấy phép thành phần bên thứ ba có thể hạn chế khả năng tải. File notebook trong Git chứa mã nguồn, khi chạy sẽ sinh output mới; số đo TPU ở trên không phải output được nhúng sẵn.
 
 ## Kiến trúc và cấu trúc repository
 

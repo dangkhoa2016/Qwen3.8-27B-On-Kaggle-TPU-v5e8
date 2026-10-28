@@ -10,7 +10,7 @@
 ![Kaggle TPU v5e-8](https://img.shields.io/badge/Accelerator-TPU_v5e--8-blue)
 ![Original BF16](https://img.shields.io/badge/Checkpoint-Original_BF16-purple)
 
-This project explores how to run **Qwen3.8-27B BF16 from the [Kaggle model mirror](https://www.kaggle.com/models/dangkhoa2016/qwen-qwen3-8-27b)**, on **eight Kaggle TPU v5e devices** using JAX and patched MaxText. In the tested environment the notebook loads the attached Kaggle checkpoint—not directly from a Hugging Face URL. The repository combines experimental inference evidence, the Full19 Text+Vision exercise, a versioned notebook source, a FastAPI/Vue playground and reproducible evaluation methods.
+This project explores how to run **Qwen3.8-27B BF16 from the [Kaggle model mirror](https://www.kaggle.com/models/dangkhoa2016/qwen-qwen3-8-27b)**, on **eight Kaggle TPU v5e devices** using JAX and patched MaxText. In the tested environment the notebook loads the attached Kaggle checkpoint—not directly from a Hugging Face URL. The repository combines measured TPU inference results, a 19-case Text + Vision notebook, a FastAPI/Vue CPU playground and documentation for input integrity and evaluation.
 
 The goal is to share **practical lessons in large-model TPU execution**—especially multimodal fusion, AOT prefill, input integrity, performance measurement and honest interpretation of model answers.
 
@@ -21,7 +21,7 @@ The goal is to share **practical lessons in large-model TPU execution**—especi
 | Understand TPU multimodal inference | Visual-to-token pipeline, MRoPE and JAX/XLA checks | [Architecture](docs/ARCHITECTURE.md) |
 | Try the API without TPU | Local FastAPI + Vue CDN mock and test suite | [CPU quickstart](#try-the-cpu-playground) |
 | Study the actual input examples | 16 hashed images and 19 case definitions | [Example gallery](examples/README.md) |
-| Reproduce the TPU run | Original BF16 model, offline support and notebook setup | [Step-by-step guide](docs/REPRODUCIBILITY.md) |
+| Run the TPU notebook | Original BF16 model, offline support and notebook setup | [Step-by-step guide](docs/REPRODUCIBILITY.md) |
 | Evaluate model quality | OCR, image reasoning, exact outputs and observed errors | [Evaluation guide](docs/ACCEPTANCE.md) |
 | Interpret speed fairly | One measured run, cold/warm methodology and gaps | [Performance guide](docs/PERFORMANCE-ANALYSIS.md) |
 
@@ -36,22 +36,22 @@ These are **model inputs**, not generated output images from Qwen. The photograp
 
 Find the exact case prompts, dimensions and SHA256 in the [16-image manifest](examples/assets_manifest.json) and [examples guide](examples/README.md).
 
-## Evidence from a real TPU run
+## Measured inference on eight TPU devices
 
-On **27 October 2026**, an experimental Split-Vision runner performed the Full19 exercise on real Kaggle TPU v5e-8 hardware:
+A real Kaggle TPU v5e-8 session on **27 October 2026** recorded:
 
-| Measurement | Recorded result |
+| Measurement | Result |
 |---|---|
-| Model | Original BF16 27B; **18 safetensors shards**, 1,199 tensor entries |
-| TPU runtime | Eight v5e devices, one MaxEngine and one parameter load |
-| Cases | **3 Text + 2 OCR + 6 Rich Vision + 8 Photography = 19** |
-| Automated execution | **19/19 case completions with EOS** |
-| Focused checks | Text 3/3; numeric OCR **731**, **482**; Rich Vision **55/55** keyword checks |
-| Full run elapsed time | **1,160.844 seconds = 19 min 20.844 s** |
+| Checkpoint | Qwen3.8-27B original BF16, **18 safetensors shards** |
+| Accelerator | Eight v5e devices; one MaxEngine and checkpoint load |
+| Workload | **3 Text + 2 OCR + 6 Rich Vision + 8 Photography = 19 cases** |
+| Generation completion | **19/19 cases reached EOS** |
+| Selected checks | Text 3/3, numeric OCR **731 / 482**, Rich Vision **55/55** keyword checks |
+| Total wall time | **1,160.844 seconds (19 min 20.844 s)** |
 
-**What this means:** the model ran and generated those responses. It does **not** mean 19/19 answers were factually perfect or that the HTTP TPU backend has been benchmarked. In the archived outputs the model misread an invoice's **8% / $69.28 tax** as **5% / $66.28**, and described **114 vs 31** as “nearly double.” The raw errors are retained so others can learn from them.
+**Interpretation:** these are observed results for the input hashes and runtime of that measured session, not an accuracy claim for all tasks or an execution record of each subsequent notebook revision. Some responses contained numeric errors (invoice tax and a dashboard comparison), which are documented without alteration.
 
-Read [the Full19 evidence](docs/FULL19-EVIDENCE.md), [model-behavior case studies](docs/FAILURE-ANALYSIS.md) and [performance interpretation](docs/PERFORMANCE-ANALYSIS.md).
+See [Full19 evidence](docs/FULL19-EVIDENCE.md), [model behavior](docs/FAILURE-ANALYSIS.md) and [performance analysis](docs/PERFORMANCE-ANALYSIS.md).
 
 ## Try the CPU playground
 
@@ -73,15 +73,15 @@ npx playwright install chromium
 npm run test:e2e
 ```
 
-The latest verified source passed **36 Python tests (one skipped)** and **two Playwright browser tests**. See [API documentation](api/README.md) for routes and validation behavior.
+The latest verified source passed **38 Python tests (one skipped)** and **two Playwright browser tests**. See [API documentation](api/README.md) for routes and validation behavior.
 
-## Run the original BF16 model on TPU
+## Run the BF16 Text + Vision notebook on TPU
 
-The [Full19 notebook source](notebooks/kaggle-tpu-v5e8-production-showcase.ipynb) documents one 27B engine, image preprocessing at **512 × 384**, **320-token prefill**, **768-token target**, native JAX/XLA sharding checks and case-by-case token evidence.
+The [version-controlled Full19 notebook](notebooks/kaggle-tpu-v5e8-production-showcase.ipynb) uses **one MaxEngine**, a separate Vision encoder, JAX/XLA prefill, **512 × 384** input tensors, a **320-token prefill** and a **768-token target**.
 
-The model and runtime-support files are **separate Kaggle attachments**. Some resources remain **Private and require authorized access** during distribution/license review. Follow [the reproducibility guide](docs/REPRODUCIBILITY.md) and [offline-resource inventory](docs/OFFLINE-SUPPORT.md); do not mix Dataset manifests across notebook versions.
+In Kaggle, select **TPU v5e-8** and attach both the [BF16 model mirror](https://www.kaggle.com/models/dangkhoa2016/qwen-qwen3-8-27b) and the [Full19 support Dataset](https://www.kaggle.com/datasets/dangkhoa2016/qwen38-27b-tpu-v5e8-full19-runtime-support). The notebook verifies a 48-file support manifest with SHA256 `cf5343f614eb32ff9234c870e4a26093f9f07e62199ee90396d516a804eb8a28` before checkpoint loading.
 
-The green-signal crossing image in Git has its own SHA256 and differs from the older image used for the recorded Full19 run. Follow the stable [Full19 notebook source](notebooks/kaggle-tpu-v5e8-production-showcase.ipynb) and [reproduction guide](docs/REPRODUCIBILITY.md); those earlier experimental responses are **not** evidence that the new crossing image has been tested successfully on TPU.
+Follow the [execution guide](docs/REPRODUCIBILITY.md) and [offline support documentation](docs/OFFLINE-SUPPORT.md). Attachment availability and third-party license requirements may restrict access. The Git notebook contains source cells and generates new inference outputs when run; the separately recorded TPU metrics above are not prefilled outputs in that notebook.
 
 ## Architecture and repository map
 
