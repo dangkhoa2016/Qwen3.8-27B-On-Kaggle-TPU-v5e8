@@ -1,53 +1,37 @@
-# Tài nguyên offline và kiểm chứng tính toàn vẹn
+# Bộ dữ liệu hỗ trợ offline và kiểm tra tính toàn vẹn
 
 > 🌐 Ngôn ngữ / Language: [English](OFFLINE-SUPPORT.md) | **Tiếng Việt**
 
-Thử nghiệm mô hình lớn trên TPU dễ tái lập hơn khi **trọng số, dependencies và ảnh đầu vào được quản lý tách biệt theo phiên bản**. Dự án attach model BF16 bằng Kaggle Model, còn runtime support bằng Dataset có SHA256.
+Notebook TPU sử dụng hai tài nguyên Kaggle attach riêng: **trọng số BF16 của mô hình** và **Full19 runtime support Dataset**. Dataset hỗ trợ chứa dependencies, mã tích hợp MaxText, ảnh đầu vào, case definitions và cache biên dịch tùy chọn; **không chứa trọng số mô hình**.
 
-## Bộ support gồm những gì?
+## Tài nguyên cần thiết
 
-| Thành phần | Mục đích |
+| Tài nguyên | Vai trò |
 |---|---|
-| MaxText archive đã patch và patch source | Tái lập tích hợp Split-Vision cụ thể |
-| Python wheels có phiên bản | Cài trong Kaggle hạn chế Internet |
-| JAX helpers | Chuẩn bị và kiểm AOT/prefill |
-| Sáu ảnh Rich + tám ảnh Photo + hai thẻ OCR | 16 nguồn ảnh dùng kiểm thử |
-| Manifests và case definitions | Liên kết prompt, ảnh và SHA256 |
-| Cache biên dịch tùy chọn | Có thể tăng tốc nếu runtime thực sự tương thích |
+| [Kaggle Qwen3.8-27B BF16 Model](https://www.kaggle.com/models/dangkhoa2016/qwen-qwen3-8-27b) | Checkpoint thực sự được nạp khi chạy TPU |
+| [Kaggle Full19 support Dataset](https://www.kaggle.com/datasets/dangkhoa2016/qwen38-27b-tpu-v5e8-full19-runtime-support) | Runtime offline và 16 ảnh đầu vào |
+| [Notebook trong Git](../notebooks/kaggle-tpu-v5e8-production-showcase.ipynb) | Mã suy luận và ghi bằng chứng |
 
-Manifest có **48 file nội dung**, ngoài ra là file manifest chính. **Không chứa trọng số BF16**.
+Manifest hỗ trợ đã được kiểm gồm **48 file**. SHA256 của `portable-bundle-manifest.json` là:
 
-## Hai phiên bản nguồn dữ liệu
+```text
+cf5343f614eb32ff9234c870e4a26093f9f07e62199ee90396d516a804eb8a28
+```
 
-| Snapshot input | Bộ ảnh | SHA256 manifest | Trạng thái |
-|---|---|---|---|
-| Snapshot Full19 gốc | Ảnh crossing đèn đỏ | `1447ee114dc2d2abce6f60f5125927f55311bf530b8cf53ab86a2576ac637ebc` | Đã kiểm 48/48 trong bộ support ghi nhận |
-| Snapshot thay ảnh đầu vào | Ảnh crossing đèn xanh | `87d172b3b3e2fb4b478888665da164e6abe7cdff3f566b4699d396c919a2ec08` | Tải lại độc lập kiểm 48/48; cần evidence TPU riêng |
+Notebook kiểm tra checksum này và tiếp tục xác minh kích thước, SHA256 của từng file **trước khi nạp trọng số**. Bản manifest trong Git nằm tại [support/portable-bundle-manifest.json](../support/portable-bundle-manifest.json).
 
-Ảnh crossing mới có SHA256 `ed532c2ba4e7eace4a81e4adfd6867c68f244fe4d64293f2bbfd1097ad7d0356`. Không đưa ảnh mới vào notebook đang ghim manifest cũ; cơ chế kiểm checksum sẽ phát hiện sự không khớp.
+## Cách sử dụng Dataset
 
-## Cách Kaggle mount Dataset
+1. Trên Kaggle, chọn **TPU v5e-8** và attach đủ hai tài nguyên nêu trên.
+2. Chạy notebook trong Git. Notebook dò thư mục mount và kiểm `portable-bundle-manifest.json`.
+3. Nếu mount theo layout khác, đặt `QWEN38_SUPPORT_DIR` đến thư mục chứa manifest.
+4. Dừng khi checksum không khớp; không bỏ qua bước kiểm tra toàn vẹn.
+5. Thu thập các file output và thời gian mới trong `/kaggle/working`.
 
-Kaggle có thể tự giải nén ZIP vào thư mục con. Notebook tìm `portable-bundle-manifest.json` trong các mount chuẩn và thư mục đã giải nén. Nếu dùng layout khác, đặt `QWEN38_SUPPORT_DIR` đến thư mục support thực tế.
+Khả năng chạy còn phụ thuộc phiên bản JAX/MaxText, TPU topology và metadata cache. Manifest trùng khớp là điều kiện cần, **không bảo đảm** việc biên dịch hoặc suy luận sẽ thành công ở runtime khác.
 
-ZIP support có thể giải nén vào thư mục riêng. Cần attach đúng tệp mà **notebook Git được duy trì** yêu cầu và kiểm SHA256 manifest trước Run All. Không coi tên Dataset tạm hay thư mục ZIP là API công khai được bảo đảm lâu dài.
+## Quyền truy cập và giấy phép
 
-Cell đầu tiên kiểm **fail-closed** kích thước, SHA256, đường dẫn tương đối, định dạng manifest và số file **trước khi nạp trọng số**. Nếu sai hoặc thiếu file, không bỏ qua bước kiểm.
+Trọng số, wheels bên thứ ba, mã upstream đã sửa, ảnh và cache có thể chịu những điều kiện giấy phép hoặc truy cập khác nhau. Clone Git không tự tải hai tài nguyên Kaggle. Hãy xác minh tài khoản có thể truy cập cả hai và xem [thông báo bên thứ ba](../THIRD_PARTY_NOTICES.vi.md) trước khi phân phối lại.
 
-## Vì sao Dataset vẫn Private?
-
-Archive gồm wheels bên thứ ba, MaxText sửa đổi, ảnh và cache thuộc nhiều phạm vi giấy phép. Dataset Private không có nghĩa cộng đồng có thể tải hoặc phân phối lại mọi nội dung. Trước khi Public cần review giấy phép và provenance theo từng thành phần.
-
-Các snapshot input **không phải training data** hoặc **kết quả production benchmark**. Full19 cũ phải gắn với SHA256 ảnh ban đầu. Kiểm checksum của ảnh thay thế không thay thế cho việc chạy TPU mới.
-
-## Tạo bundle đã kiểm chứng cho dự án khác
-
-1. Liệt kê file bắt buộc và loại mọi bí mật, dữ liệu cá nhân, file tạm.
-2. Quản lý trọng số model riêng, ghi đúng revision.
-3. Tính SHA256 từng file; ghi kích thước ảnh.
-4. Đóng ZIP bất biến, kiểm lại sau giải nén và sau khi tải từ cloud.
-5. Ghim hash manifest trong notebook, dừng nếu không khớp.
-6. Chạy notebook trên TPU thật trước khi công bố số đo.
-7. Khi được phép phân phối, công khai inventory giấy phép và dependencies.
-
-[Chạy thử](REPRODUCIBILITY.vi.md) · [Giấy phép](../MODEL_LICENSE.vi.md) · [Đánh giá](ACCEPTANCE.vi.md)
+[Hướng dẫn chạy](REPRODUCIBILITY.vi.md) · [Kiến trúc](ARCHITECTURE.vi.md) · [Manifest ảnh](../examples/assets_manifest.json)

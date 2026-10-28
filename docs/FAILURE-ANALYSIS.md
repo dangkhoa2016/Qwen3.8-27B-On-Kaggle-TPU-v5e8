@@ -1,52 +1,31 @@
-# Lessons from model errors and evaluation pitfalls
+# Model behavior: OCR and visual reasoning case studies
 
 > 🌐 Language / Ngôn ngữ: **English** | [Tiếng Việt](FAILURE-ANALYSIS.vi.md)
 
-A useful inference example should make failures inspectable. The Full19 exercise produced several observations that help explain **why successful generation, matching keywords and even EOS are not enough to guarantee correctness**.
+Full19 contains examples where the model completed generation yet produced inaccurate content. These findings are documented so that readers can distinguish the source image, the model's raw answer and automated validation.
 
-## Case study 1 — Invoice arithmetic and labels
+## Case study 1 — Invoice tax
 
-The office-invoice source image contains:
-
-| Field | Source image | Reported model output |
+| Field | Value visible in image | Reported model answer |
 |---|---|---|
-| Subtotal | **$866.00** | Preserved |
+| Subtotal | $866.00 | Correct |
 | Tax | **8% / $69.28** | **5% / $66.28** |
-| Total | **$935.28** | Preserved |
+| Total | $935.28 | Correct |
 
-Two additional greedy calls with the same image and prompt reproduced the incorrect tax value, each reaching EOS with **171 generated token IDs** and identical token sequences.
+Two additional greedy runs with the same input returned the same incorrect tax value and reached EOS. The model output should be preserved rather than silently corrected.
 
-**Lesson:** identify tax rates and values from the image rather than assuming a plausible percentage. Arithmetic validation can detect contradictions, but should never silently repair or relabel the raw output.
+## Case study 2 — Numeric comparison
 
-## Case study 2 — Comparative language
+A dashboard shows **114** Saturday deliveries and **31** Monday deliveries. The model described the difference as “nearly double,” although `114 / 31 ≈ 3.68`. Recognizing individual values is not sufficient to validate a claim about their relationship.
 
-A delivery dashboard shows **114 Saturday deliveries** and **31 Monday deliveries**. The model called the former “nearly double.” In fact,
+## Case study 3 — Validation boundaries
 
-`114 / 31 ≈ 3.68`
+An automated keyword or pattern match can pass despite a wrong number or a misleading explanation. Evaluate source-image truth, generated raw text and scorer output as separate records. When a validator is improved, keep the original model response for auditability.
 
-The entities were identified, yet their relationship was poorly described. **Lesson:** numerical grounding requires checking the relationship, not only the individual figures.
+## Case study 4 — Input provenance
 
-## Case study 3 — Tests can make mistakes, too
+Visual conclusions depend on the exact image presented to the model. File names and case IDs alone cannot establish input identity; pin image SHA256 and source dimensions for each result. If image bytes change, generate new evidence instead of transferring another image's answer.
 
-An earlier validator regex accidentally matched `Total` within `Subtotal`. A later validator corrected that parsing bug. This was a **test-harness correction**, not a retroactive model improvement.
+These examples illustrate evaluation methodology, **not** a claim that every Qwen response is incorrect or that a particular accuracy percentage has been measured.
 
-Separate three things when auditing a run: **source truth**, **generated model text**, and **scorer interpretation**. Preserve the original model text even after fixing a scorer.
-
-## Case study 4 — Image provenance affects claims
-
-The earlier crossing source showed a **red do-not-walk pedestrian signal** while people occupied the zebra crossing. Qwen's archived response noticed and warned about that conflict. The Git repository now uses a **different green-signal image** with a different SHA256. The old answer cannot be reused to score the new image.
-
-**Lesson:** a filename or case ID is not enough to identify the input. Include its SHA256 whenever reporting an output.
-
-## Practical safeguards
-
-- Create per-case truth annotations for exact numbers and safety-critical visual details.
-- Evaluate OCR digits, arithmetic comparisons and natural-language fidelity separately.
-- Record every output and failure; do not publish a cherry-picked set as the full run.
-- Pin image and prompt hashes alongside generated token IDs, EOS and timings.
-- Run deterministic repeats to test reproducibility, but do not portray them as statistically independent samples.
-- Keep an execution result distinct from factual correctness and from production readiness.
-
-These observations are useful for anyone building image-understanding demos, document OCR evaluations or LLM regression tests. They are **not** a claim that all Qwen outputs exhibit the same errors.
-
-[Evaluation matrix](ACCEPTANCE.md) · [Experimental evidence](FULL19-EVIDENCE.md) · [Source images](../examples/README.md)
+[Evaluation guide](ACCEPTANCE.md) · [Full19 results](FULL19-EVIDENCE.md) · [Image inputs](../examples/README.md)

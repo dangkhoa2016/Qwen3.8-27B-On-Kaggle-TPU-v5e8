@@ -1,53 +1,37 @@
-# Offline runtime resources and dataset integrity
+# Offline support Dataset and integrity verification
 
 > 🌐 Language / Ngôn ngữ: **English** | [Tiếng Việt](OFFLINE-SUPPORT.vi.md)
 
-Large TPU experiments are easier to reproduce when model weights, runtime dependencies and image inputs are **separate, versioned resources**. This project uses a Kaggle Model attachment for BF16 weights and a checksum-pinned Dataset for offline support.
+The TPU notebook uses separate Kaggle attachments for the **BF16 model weights** and the **Full19 runtime support Dataset**. The support Dataset contains dependencies, MaxText integration files, image inputs, case definitions and optional compilation-cache files, but **does not include model weights**.
 
-## What the support bundle contains
+## Required resources
 
-| Resource | Why it is included |
+| Resource | Purpose |
 |---|---|
-| Patched MaxText archive and patch source | Reproduce the specific Split-Vision integration |
-| Versioned Python wheels | Install in restricted/offline Kaggle environments |
-| JAX helper modules | Prepare and verify the AOT/prefill path |
-| Six Rich Vision images + eight Photography images + two OCR cards | Supply the 16 image test inputs |
-| Input/case manifests | Associate each prompt with the correct image and SHA256 |
-| Optional compiled cache artifacts | Candidate acceleration, subject to native compatibility checks |
+| [Kaggle Qwen3.8-27B BF16 Model](https://www.kaggle.com/models/dangkhoa2016/qwen-qwen3-8-27b) | Checkpoint loaded during TPU inference |
+| [Kaggle Full19 support Dataset](https://www.kaggle.com/datasets/dangkhoa2016/qwen38-27b-tpu-v5e8-full19-runtime-support) | Offline runtime files and 16 input images |
+| [Version-controlled notebook](../notebooks/kaggle-tpu-v5e8-production-showcase.ipynb) | Inference implementation and evidence capture |
 
-There are **48 manifest-indexed content files**, plus the manifest. BF16 model weights are **not inside the Dataset**.
+The verified support manifest lists **48 files**. The checksum of `portable-bundle-manifest.json` is:
 
-## Two documented input versions
+```text
+cf5343f614eb32ff9234c870e4a26093f9f07e62199ee90396d516a804eb8a28
+```
 
-| Input snapshot | Image set | Manifest SHA256 | Verified status |
-|---|---|---|---|
-| Original Full19 input snapshot | Red-signal crossing source | `1447ee114dc2d2abce6f60f5125927f55311bf530b8cf53ab86a2576ac637ebc` | 48/48 verified in the recorded support collection |
-| Replacement-image input snapshot | Green-signal crossing source | `87d172b3b3e2fb4b478888665da164e6abe7cdff3f566b4699d396c919a2ec08` | 48/48 verified after independent download; separate TPU evidence required |
+The notebook checks this checksum and then validates the size and SHA256 of every listed file **before** loading model weights. The Git copy is available at [support/portable-bundle-manifest.json](../support/portable-bundle-manifest.json).
 
-The updated crossing PNG has SHA256 `ed532c2ba4e7eace4a81e4adfd6867c68f244fe4d64293f2bbfd1097ad7d0356`. Do not substitute it into a notebook that expects the old bundle manifest; the checksum guard is intended to catch this mismatch.
+## Using the Dataset
 
-## How Kaggle attaches the files
+1. In Kaggle, select **TPU v5e-8** and attach both resources above.
+2. Run the Git notebook. It locates the Dataset in Kaggle's mount directory and checks the included `portable-bundle-manifest.json`.
+3. For a different mount layout, set `QWEN38_SUPPORT_DIR` to the directory containing the manifest.
+4. Stop on a checksum mismatch; do not suppress the integrity checks.
+5. Collect new output files and timings under `/kaggle/working`.
 
-Kaggle may automatically expand the uploaded ZIP into a named child directory. The notebook searches for `portable-bundle-manifest.json` at supported mount roots and within the expected extracted folder. For custom layouts set `QWEN38_SUPPORT_DIR` to the actual support directory.
+Compatibility also depends on the installed JAX/MaxText stack, TPU topology and executable cache metadata. A matching manifest is a prerequisite, **not** a guarantee that compilation or inference will succeed on a different runtime.
 
-A zipped support bundle may unpack into its own named directory. Attach the files expected by the **maintained Git notebook** and check their manifest SHA256 before Run All. Do not treat any transient dataset name or ZIP folder name as a permanent public API.
+## Availability and licensing
 
-The first code cell performs **fail-closed verification** of file size, digest, allowed relative paths, manifest format and required file count. It runs **before loading model weights**. If a file is absent or modified, stop rather than bypass the check.
+Model weights, third-party wheels, patched upstream code, images and cached binaries may have separate license or access conditions. A Git checkout alone does not include the attached Kaggle resources. Verify that your Kaggle account can access both attachments and review [third-party notices](../THIRD_PARTY_NOTICES.md) before redistribution.
 
-## Why the bundle remains Private
-
-The archive contains redistributable and potentially differently licensed assets: third-party wheels, modified upstream MaxText, images and optional cache binaries. Private availability does **not** mean readers can access or legally redistribute all contents. A public package needs component-by-component license and provenance review.
-
-The documented input snapshots are **not training data** and **not production benchmark outputs**. Historic Full19 results remain associated with original image hashes. Checksum verification for replacement images is not a substitute for a new TPU run.
-
-## Making your own verified bundle
-
-1. Inventory required files and remove unnecessary secrets, user data and transient artifacts.
-2. Preserve model weights separately and record the exact model revision.
-3. Hash every distributed file; include dimensions for image files.
-4. Build an immutable ZIP and verify it after extraction and after downloading from the hosting provider.
-5. Pin the manifest hash in the notebook and fail closed on any mismatch.
-6. Run the exact notebook on target TPU hardware before reporting runtime metrics.
-7. Publish a clear dependency/license inventory alongside the artifacts if redistribution is permitted.
-
-[Run guide](REPRODUCIBILITY.md) · [Model licenses](../MODEL_LICENSE.md) · [Evaluation](ACCEPTANCE.md)
+[Execution guide](REPRODUCIBILITY.md) · [Architecture](ARCHITECTURE.md) · [Image manifest](../examples/assets_manifest.json)

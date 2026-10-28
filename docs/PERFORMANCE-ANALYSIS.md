@@ -1,93 +1,51 @@
-# Qwen3.8-27B BF16 performance on Kaggle TPU v5e-8
+# Qwen3.8-27B BF16 inference performance on Kaggle TPU v5e-8
 
 > 🌐 Language / Ngôn ngữ: **English** | [Tiếng Việt](PERFORMANCE-ANALYSIS.vi.md)
 
-**Qwen3.8-27B BF16 can execute Text + Vision tasks across eight TPU v5e devices through JAX and MaxText.** This report presents a measured Full19 TPU run, explains multimodal inference costs, and shares a reusable benchmark methodology for other large-model projects.
+This report presents measured execution of Qwen3.8-27B BF16 Text + Vision inference on Kaggle TPU v5e-8 using JAX, MaxText and Split-Vision. It distinguishes end-to-end execution time from per-request latency and generation completion from answer accuracy.
 
-## Performance at a glance
+## Measured Full19 session
 
-| Metric | Recorded result |
+| Metric | Recorded observation |
 |---|---|
-| Accelerator | Kaggle TPU v5e-8 — 8 TPU devices |
-| Checkpoint | Original **Qwen3.8-27B BF16**, 18 safetensors shards |
-| Runtime | JAX / MaxText with Split-Vision integration |
-| Workload | **19 cases**: 3 Text, 2 numeric OCR, 6 Rich Vision, 8 Photography |
-| Total Full19 wall time | **1,160.844 seconds (19 min 20.844 s)** |
+| Accelerator | Kaggle TPU v5e-8, eight TPU devices |
+| Checkpoint | Qwen3.8-27B original BF16, 18 safetensors shards |
+| Runtime | JAX / MaxText, separate Vision encoder and compiled multimodal prefill |
+| Workload | 19 cases: 3 Text, 2 numeric OCR, 6 Rich Vision, 8 Photography |
+| Execution time | **1,160.844 seconds (19 min 20.844 s)** |
 | Generation completion | **19/19 cases reached EOS** |
-| Selected response checks | Text 3/3; numeric OCR **731** and **482**; Rich Vision **55/55** keyword checks |
+| Selected checks | Text 3/3; OCR digits 731 and 482; Rich Vision 55/55 keyword checks |
 
-These observations come from **one actual Full19 TPU run on 27 October 2026** using the input images associated with that run. The 19/19 result measures generation-path completion; factual accuracy is assessed separately. The total time represents the whole execution session rather than one API request's latency.
+The measurements were recorded on **27 October 2026** during one TPU session. They describe the exact benchmark inputs and software used in that session. They are not an independent run of every subsequent repository revision, and should not be interpreted as proof of 19/19 factual correctness.
 
-## Execution configuration
+## Configuration and stages
 
 | Component | Configuration |
 |---|---|
-| Model | [Kaggle mirror — Qwen3.8-27B BF16](https://www.kaggle.com/models/dangkhoa2016/qwen-qwen3-8-27b) |
-| Engine | One `MaxEngine` on 8 TPU devices; one checkpoint load |
-| Processed image size | **512 × 384 pixels** |
-| Prefill | **320 tokens** |
-| Target budget | **768 tokens** |
-| Rich Vision / Photography decode | Up to **448 steps** |
-| Input identification | Prompts, manifest and image SHA256 |
+| Checkpoint source for TPU execution | [Kaggle BF16 model mirror](https://www.kaggle.com/models/dangkhoa2016/qwen-qwen3-8-27b) |
+| Engine | One MaxEngine; checkpoint loaded once |
+| Processed image resolution | 512 × 384 pixels |
+| Prefill length | 320 tokens |
+| Target length | 768 tokens |
+| Rich Vision / Photography decode | Up to 448 steps |
+| Input provenance | Case prompts, image SHA256 and runtime manifest |
 
-To verify the configuration, consult the [Full19 notebook source](../notebooks/kaggle-tpu-v5e8-production-showcase.ipynb), [TPU architecture](ARCHITECTURE.md) and [Full19 results](FULL19-EVIDENCE.md). The model is loaded from the attached Kaggle mirror, not directly from Hugging Face.
+The wall-clock result includes setup, model loading, compilation, Vision encoding, prefill, decoding and result capture. It is **not** the average latency of an HTTP request or the token generation throughput of a serving system.
 
-## Stages that contribute to elapsed time
+Multimodal inference adds image preprocessing and embedding computation before text decoding. Cached JAX executables can reduce compilation costs only when device topology, compiler, shapes, sharding and dtypes are compatible; matching a cached file's SHA256 alone does not validate execution.
 
-| Stage | Main operation | Performance relevance |
-|---|---|---|
-| Preparation | Dependency, input and SHA256 checks | Avoids wasting TPU runtime on invalid inputs |
-| Engine startup | JAX/XLA setup, topology and compilation | Significant cold-start overhead |
-| Checkpoint loading | Read and distribute BF16 parameters | I/O and device placement |
-| Vision encoder | Turn images into embeddings | Additional cost for image requests |
-| Multimodal prefill | Fuse text/image tokens and MRoPE | Sensitive to sequence length and shape |
-| Decode | Generate tokens until EOS or budget | Sensitive to answer length |
-| Result capture | Save output, timings and evidence | Part of end-to-end measurement |
+## How to benchmark other configurations
 
-A separate earlier engineering measurement recorded approximately **49.8 seconds for engine construction** and **147.0 seconds for model loading**. They illustrate startup costs but were collected in a different measurement context; they are not a verified breakdown of the Full19 total above.
+1. Record the model revision, source Git SHA, support manifest SHA256, prompts, images, runtime versions and device topology.
+2. Separate cold start, checkpoint loading, Vision encoding, prefill, decoding and end-to-end timing.
+3. Record generated token counts, EOS and raw text for each case.
+4. Keep unsuccessful runs and semantic errors alongside timing records.
+5. Use repeated comparable observations before publishing median, p95 or concurrency claims.
 
-Similarly, `1,160.844 / 19` is not the mean per-request latency: the 19 tasks have different lengths and costs, and the session total includes preparation.
+## Interpretation and limitations
 
-## Four engineering lessons
+A completed generation is not necessarily a correct answer. The measured outputs included an invoice tax error (8% / $69.28 read as 5% / $66.28) and an inaccurate comparison of 114 with 31. Keyword checks likewise do not certify complete visual understanding.
 
-### 1. Cold start differs from warm inference
+**Results are attributable only to the exact input hashes and execution record of the measured run.** The [version-controlled notebook](../notebooks/kaggle-tpu-v5e8-production-showcase.ipynb) supplies source code for new runs; its generated evidence must be collected separately. CPU mock tests do not measure Qwen model speed or TPU HTTP serving.
 
-The first invocation may load weights, construct the engine and compile. Once ready, subsequent requests may reuse that state. A useful benchmark distinguishes **startup**, **first inference**, and **warm inference**.
-
-### 2. Vision encoding deserves its own timing
-
-Text + Vision adds preprocessing, image embeddings and fusion before decode. Decoder tokens per second alone cannot describe the full latency of image-based questions.
-
-### 3. Generated length affects speed
-
-Two prompts on the same image may generate very different token counts. Fair comparisons document processed image size, prompt tokens, token budget, generated count and EOS stopping conditions.
-
-### 4. Quality belongs next to performance
-
-Full19 completed 19 generation paths and passed the recorded keyword checks, yet included an invoice tax reading error and a dashboard ratio reasoning error. Useful measurements preserve **timings, unmodified responses and semantic evaluation** together.
-
-## A repeatable benchmarking method
-
-1. **Pin the environment:** Git SHA, Kaggle Model revision, manifest SHA256, JAX/MaxText versions, TPU topology and compilation-cache policy.
-2. **Keep the workload stable:** record prompts, image SHA256, processed dimensions, prefill length and decode budget for every case.
-3. **Time each stage:** engine startup, checkpoint loading, vision encoding, prefill, decode and end-to-end.
-4. **Separate cold and warm:** collect repeated independent runs with sample counts; retain initialization costs for cold-start reports.
-5. **Report appropriate statistics:** median/p95 require multiple comparable observations and an explicit sample size.
-6. **Preserve full evidence:** token IDs, generated text, EOS, timings, exceptions and quality rubric, including unsuccessful cases.
-
-With adequate logs, the following metrics make configurations easier to compare:
-
-| Metric | Definition |
-|---|---|
-| End-to-end latency | Completion time minus request start time, using an explicit request boundary |
-| Decode throughput | Generated tokens / corresponding decode duration |
-| System throughput | Completed requests or tokens / observation time, with concurrency stated |
-| p50/p95 latency | Percentiles from repeated comparable runs |
-
-## Applying the results
-
-The numbers above describe **one Full19 run on real TPU hardware**. Evaluating a user-facing serving system additionally calls for multi-request HTTP tests, concurrency, latency distributions and TPU utilization. The repository's CPU Playground is a mock API, not a BF16 performance benchmark.
-
-A new green-signal pedestrian crossing image replaced an earlier red-signal source in the Git examples. Their SHA256 values differ, so the older response and timing remain associated with the older image; the new image requires its matching manifest and results.
-
-**Explore further:** [Architecture](ARCHITECTURE.md) · [Full19 results](FULL19-EVIDENCE.md) · [Evaluation](ACCEPTANCE.md) · [Reproduction](REPRODUCIBILITY.md)
+[Architecture](ARCHITECTURE.md) · [Full19 evidence](FULL19-EVIDENCE.md) · [Reproduction](REPRODUCIBILITY.md)

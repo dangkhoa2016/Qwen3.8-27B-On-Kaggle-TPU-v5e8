@@ -1,36 +1,33 @@
-# Hướng dẫn tái lập Qwen3.8-27B trên TPU
+# Tái lập suy luận Qwen3.8-27B BF16 Text + Vision trên Kaggle TPU v5e-8
 
 > 🌐 Ngôn ngữ / Language: [English](REPRODUCIBILITY.md) | **Tiếng Việt**
 
-Tài liệu này hướng dẫn chuẩn bị môi trường để kiểm tra Text+Vision bằng mô hình **BF16 nguyên gốc trên Kaggle TPU v5e-8**. Các thao tác chuẩn bị đã xác minh được phân biệt rõ với kết quả **chỉ có thể xác nhận sau khi chạy TPU thật**.
+Hướng dẫn này sử dụng [notebook Full19 trong Git](../notebooks/kaggle-tpu-v5e8-production-showcase.ipynb) cùng các tài nguyên Kaggle tương ứng. Bộ thử gồm 19 case trên tám thiết bị TPU v5e. CPU tests và giao diện mock có thể chạy độc lập nhưng không thực thi mô hình 27B.
 
-## Chọn cách kiểm thử
+## Điều kiện cần
 
-| Cách chạy | Mục đích | Quyền truy cập / kết quả |
-|---|---|---|
-| CPU tests và mock UI | Kiểm HTTP, nhập liệu, giao diện | Không cần trọng số hoặc TPU |
-| Full19 support gốc | Nghiên cứu thiết lập experimental 27/10 | Cần đúng các file support đã ghi; output 19/19 cũ được lưu riêng |
-| Full19 với ảnh mới | Kiểm tra ảnh crossing đèn xanh | Cần notebook và support khớp SHA256 ảnh, cùng output TPU mới |
+- Kaggle Notebook chọn **TPU v5e-8**, đủ tám TPU.
+- [Kaggle Model Qwen3.8-27B BF16 nguyên gốc](https://www.kaggle.com/models/dangkhoa2016/qwen-qwen3-8-27b) — checkpoint thực thi, Transformers/default/v1.
+- [Full19 support Dataset](https://www.kaggle.com/datasets/dangkhoa2016/qwen38-27b-tpu-v5e8-full19-runtime-support) — manifest 48 file, ảnh đầu vào và runtime offline.
+- Runtime tương thích, gồm JAX/JAXLIB 0.11.0 và Transformers 5.12.1 theo cấu hình đã ghim.
 
-**Kaggle Model và các file support có thể cần quyền truy cập.** Tên và SHA256 bên dưới dùng để nhận diện input đã ghi, không cam kết mọi Dataset lịch sử luôn tải được công khai.
+SHA256 manifest: `cf5343f614eb32ff9234c870e4a26093f9f07e62199ee90396d516a804eb8a28`.
 
-## Điều kiện trước khi chạy
+## Chạy notebook trên TPU
 
-- Kaggle TPU v5e-8 với **đúng tám thiết bị TPU**; một MaxEngine và một lần nạp BF16.
-- Model thực sự được attach khi inference: [bản mirror BF16 trên Kaggle](https://www.kaggle.com/models/dangkhoa2016/qwen-qwen3-8-27b) (`dangkhoa2016/qwen-qwen3-8-27b`, Transformers/default/v1). Index BF16 có **18 shard**, **1.199 tensor** và **55.562.855.904 byte**.
-- Dataset support khớp SHA256 manifest đã ghim trong notebook. **Notebook nguồn trong Git là tài liệu tham chiếu được duy trì**; nếu đổi ảnh đầu vào phải dùng manifest tương ứng và đo kết quả mới.
-- Runtime tương thích. Mốc experimental đã ghi **JAX/JAXLIB 0.11.0** và **Transformers 5.12.1**.
+1. Import [notebook trong Git](../notebooks/kaggle-tpu-v5e8-production-showcase.ipynb) vào Kaggle, bật TPU v5e-8.
+2. Attach Kaggle BF16 Model và Full19 support Dataset. Việc tải các tài nguyên phụ thuộc quyền truy cập và trạng thái cung cấp trên Kaggle.
+3. Chạy lần lượt các cell, không restart kernel giữa chừng. Preflight kiểm model, manifest và **SHA256 của 48 file**.
+4. Notebook ghi output vào thư mục riêng theo UTC dưới `/kaggle/working`.
+5. Đối chiếu toàn bộ câu trả lời, token IDs, EOS, lỗi và thời gian của từng case trước khi kết luận hoàn tất.
 
-| Dataset | Vai trò | SHA256 manifest |
-|---|---|---|
-| `Snapshot support experimental gốc` | Input thực nghiệm 27/10 | `1447ee114dc2d2abce6f60f5125927f55311bf530b8cf53ab86a2576ac637ebc` |
-| `Snapshot support ảnh thay thế` | Ứng viên với ảnh crossing mới | `87d172b3b3e2fb4b478888665da164e6abe7cdff3f566b4699d396c919a2ec08` |
+Cấu hình gồm một MaxEngine, một lần nạp checkpoint, ảnh xử lý 512 × 384, prefill 320 token, target 768 token và tối đa 448 bước decode cho Rich Vision/Photography. Cache đúng checksum vẫn phải qua kiểm tra native JAX/XLA.
 
-Bộ input ảnh mới đã được kiểm **48/48 SHA256**, nhưng điều đó **không chứng minh inference**. Tham khảo [notebook Full19 trong Git](../notebooks/kaggle-tpu-v5e8-production-showcase.ipynb) và support đã ghim để tái lập. Nếu thay ảnh đầu vào, cần đồng bộ manifest rồi chạy model lại.
+**Bằng chứng thực thi:** Lượt Full19 đo ngày 27/10/2026 đã hoàn thành 19/19 đường sinh token với EOS trong 1.160,844 giây; SHA256 đầu vào và phiên bản mã của lượt đo thuộc hồ sơ tương ứng. Khi chạy notebook hiện tại phải tạo output riêng, không chép số liệu benchmark thành kết quả mới. Sinh token thành công không đồng nghĩa trả lời chính xác.
 
-## Bước 1 — Khám phá dự án không cần TPU
+## Kiểm thử thành phần CPU
 
-Từ repository đã clone:
+Từ thư mục gốc repository:
 
 ```bash
 python -m pip install -r requirements-cpu.txt
@@ -40,37 +37,16 @@ npx playwright install chromium
 npm run test:e2e
 ```
 
-Bộ test xác minh API, điều kiện nhập liệu và UI mock. Source mới nhất đã đạt **36 Python PASS, 1 SKIP và 2 Playwright PASS**. Các lệnh này **không chạy Qwen inference**.
+Các lệnh kiểm API, guard dữ liệu và frontend CPU mock, **không** chạy suy luận Qwen trên TPU.
 
-## Bước 2 — Chuẩn bị notebook Kaggle
+## Xử lý lỗi thường gặp
 
-1. Bật **TPU v5e-8**; có thể tắt Internet khi đã attach bộ support offline.
-2. Attach Kaggle Model BF16 gốc, không thay bằng GGUF/INT8.
-3. Attach support khớp notebook và SHA256 manifest. Nếu dùng ảnh crossing mới, phải đồng bộ manifest và chạy lại; không ghép ảnh của snapshot này với hash của snapshot khác.
-4. Kiểm tra Kaggle giải nén ZIP. Notebook tìm `portable-bundle-manifest.json` ở mount gốc hoặc thư mục con sau giải nén. Có thể dùng `QWEN38_SUPPORT_DIR` nếu mount khác.
-5. Chạy **preflight đầu tiên**. Preflight kiểm 48 SHA256, kích thước file, patches, model index và đường dẫn **trước khi import JAX**.
-
-## Bước 3 — Chạy và lưu số đo
-
-Notebook dùng **prefill 320**, **target 768**, ảnh suy luận **512 × 384**. Chạy tuần tự các cell trong cùng phiên TPU và giữ thư mục evidence riêng theo thời gian dưới `/kaggle/working`.
-
-Với mỗi case cần giữ SHA256 ảnh, prompt gốc, token IDs, câu trả lời nguyên văn, EOS, thời gian và exception. Ghi danh sách thiết bị, checksum model index/patch/manifest, phiên bản runtime và tổng wall time. Cache đúng checksum vẫn phải đi qua native JAX/XLA sharding/dtype validation.
-
-## Bước 4 — Đối chiếu công bằng
-
-Full19 experimental cũ hoàn thành **19/19 kiểm tra tự động với EOS trong 1.160,844 giây**. Tuy nhiên mô hình đọc sai thuế invoice và mô tả sai tỷ lệ dashboard. **Không được dùng output từ ảnh cũ để chứng minh ảnh mới**.
-
-Chỉ ghi *hoàn thành* khi phiên chạy mới thực sự sinh đủ case. Chất lượng ngữ nghĩa phải được đánh giá riêng; lưu cả output sai và những lần chạy lỗi. Xem [đánh giá](ACCEPTANCE.vi.md) và [bằng chứng](FULL19-EVIDENCE.vi.md).
-
-## Khắc phục sự cố
-
-| Triệu chứng | Kiểm tra đầu tiên |
+| Hiện tượng | Kiểm tra |
 |---|---|
-| Không thấy model | Đường dẫn attach, index và đủ 18 shard |
-| Sai SHA256 support | Cặp notebook/Dataset, thư mục giải nén, phiên bản |
-| Thiếu tám TPU | Thiết lập accelerator và backend JAX |
-| Lỗi AOT/sharding | Image-token offset, shape, dtype, layout và patch |
-| Không có EOS | Decode budget, token cuối và raw output |
-| Nội dung sai | Ảnh gốc, prompt, rubric; tuyệt đối không sửa generated text |
+| Thiếu model | Kaggle model attachment, index, đủ 18 shard |
+| Manifest không khớp | Mount Dataset, thư mục giải nén, SHA256 |
+| Không đủ TPU | Accelerator, danh sách thiết bị JAX |
+| AOT không biên dịch | Runtime, shape, sharding, dtype và cache |
+| Thiếu EOS hoặc trả lời sai | Budget, prompt, SHA256 ảnh và raw output |
 
-[Kiến trúc](ARCHITECTURE.vi.md) · [Support](OFFLINE-SUPPORT.vi.md) · [Đánh giá](ACCEPTANCE.vi.md) · [Ảnh ví dụ](../examples/README.vi.md)
+[Support Dataset](OFFLINE-SUPPORT.vi.md) · [Đánh giá](ACCEPTANCE.vi.md) · [Hiệu năng](PERFORMANCE-ANALYSIS.vi.md)

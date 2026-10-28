@@ -71,10 +71,10 @@ QWEN38_BACKEND=mock python -m uvicorn api.app:app --host 127.0.0.1 --port 8090
 
 **Notebook TPU** dành cho suy luận mô hình 27B thật; cần BF16 Model, Dataset support tương ứng và tám TPU. Xem [hướng dẫn tái lập](REPRODUCIBILITY.vi.md).
 
-Adapter HTTP thử nghiệm tại `api/tpu_factory.py`, `api/maxengine_adapter.py` hiện vẫn dùng đường dẫn support cũ và budget 256/384, khác notebook. Chưa có bằng chứng chạy HTTP TPU end-to-end.
+Adapter HTTP trong `api/tpu_factory.py` và `api/maxengine_adapter.py` là phần tích hợp API riêng với cấu hình khác notebook. Hiện chưa có số liệu HTTP serving thực tế trên TPU để đánh giá throughput hoặc latency.
 
 ## Diễn giải đúng kết quả
 
-Lượt **Split-Vision experimental ngày 27/10/2026** hoàn thành 19/19 kiểm tra tự động với EOS trong **1.160,844 giây**. Đây chưa phải benchmark throughput tổng quát hoặc bảo đảm mọi mô tả đều đúng. Ảnh crossing mới có SHA256 khác nên phải có **evidence TPU riêng** trước khi gán bất kỳ kết quả nào cho ảnh này.
+Lượt chạy TPU ngày **27/10/2026** hoàn thành 19/19 trường hợp sinh token với EOS trong **1.160,844 giây**. Số đo chỉ áp dụng cho input và phiên bản đã ghi trong hồ sơ lượt chạy, không phải benchmark HTTP throughput hoặc bảo đảm độ chính xác tổng quát.
 
 Đọc tiếp [Tái lập](REPRODUCIBILITY.vi.md), [Ví dụ Full19](FULL19-EVIDENCE.vi.md), [Hiệu năng](PERFORMANCE-ANALYSIS.vi.md) và [Tích hợp API](../api/TPU-INTEGRATION.vi.md).

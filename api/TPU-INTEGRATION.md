@@ -43,7 +43,7 @@ These are **source contracts and CPU test observations**, not evidence of a hard
 
 ## Important integration difference
 
-The notebook's real experimental path uses a **320/768 prefill/target budget** and 512 × 384 image preprocessing; the separate HTTP adapter still references **256/384** and an older support mount with a 256 × 192 image path. The newer 48-file Dataset does not contain that historical image. Thus the HTTP path cannot be presented as the same proven pipeline.
+The version-controlled notebook configures **320/768 prefill/target tokens** and 512 × 384 image preprocessing. The independent HTTP adapter currently has different token and image settings. Its outputs and serving performance must therefore be validated separately; the notebook measurements do not qualify this adapter.
 
 ## What would qualify TPU HTTP serving?
 

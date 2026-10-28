@@ -1,52 +1,31 @@
-# Bài học từ lỗi mô hình và những bẫy đánh giá
+# Hành vi mô hình: nghiên cứu OCR và suy luận hình ảnh
 
 > 🌐 Ngôn ngữ / Language: [English](FAILURE-ANALYSIS.md) | **Tiếng Việt**
 
-Một demo inference có giá trị khi người xem kiểm chứng được cả lỗi. Full19 đã cho thấy **chương trình sinh output thành công, khớp keyword và có EOS vẫn chưa đủ chứng minh nội dung chính xác**.
+Full19 có những trường hợp mô hình hoàn tất sinh token nhưng nội dung vẫn sai. Các quan sát này giúp tách dữ liệu thật trên ảnh, câu trả lời nguyên văn và kết quả kiểm tự động.
 
-## Trường hợp 1 — Thuế và con số trên hóa đơn
+## Trường hợp 1 — Thuế hóa đơn
 
-Ảnh hóa đơn văn phòng ghi:
-
-| Trường | Giá trị trên ảnh | Model mô tả |
+| Trường | Giá trị thấy trên ảnh | Model trả về |
 |---|---|---|
-| Subtotal | **$866.00** | Giữ đúng |
+| Subtotal | $866.00 | Đúng |
 | Thuế | **8% / $69.28** | **5% / $66.28** |
-| Total | **$935.28** | Giữ đúng |
+| Total | $935.28 | Đúng |
 
-Hai lượt greedy với cùng ảnh và prompt vẫn sinh sai thuế, đều có EOS và **171 token IDs** giống hệt nhau.
+Hai lượt greedy thêm với cùng đầu vào tiếp tục trả sai giá trị thuế và vẫn đạt EOS. Cần giữ output nguyên gốc thay vì âm thầm sửa thành số đúng.
 
-**Bài học:** phải đọc đúng nhãn thuế và con số trên ảnh, không chọn tỷ lệ nghe có vẻ hợp lý. Kiểm toán học có thể phát hiện mâu thuẫn, nhưng không được âm thầm sửa raw output của model.
+## Trường hợp 2 — So sánh số liệu
 
-## Trường hợp 2 — Ngôn ngữ so sánh
+Dashboard có **114** đơn Thứ Bảy và **31** đơn Thứ Hai. Model diễn đạt là “gần gấp đôi”, trong khi `114 / 31 ≈ 3,68`. Đọc đúng từng giá trị không có nghĩa mô tả mối quan hệ giữa chúng đúng.
 
-Dashboard có **114 đơn Thứ Bảy**, **31 đơn Thứ Hai**. Mô hình nói “gần gấp đôi”, trong khi:
+## Trường hợp 3 — Giới hạn của bộ kiểm tự động
 
-`114 / 31 ≈ 3,68`
+Khớp keyword hay regex có thể đạt dù số liệu sai hoặc giải thích gây hiểu nhầm. Cần lưu riêng ground truth trên ảnh, raw output do model sinh và kết quả scorer. Khi cải thiện validator, không được thay đổi output gốc.
 
-Nhận diện từng con số đúng chưa có nghĩa mô tả quan hệ đúng. **Bài học:** đánh giá numerical grounding phải kiểm cả phép so sánh.
+## Trường hợp 4 — Provenance ảnh đầu vào
 
-## Trường hợp 3 — Bộ chấm điểm cũng có bug
+Kết luận thị giác phụ thuộc đúng ảnh mà mô hình đã nhận. Tên file hoặc case ID không đủ để nhận diện nội dung; cần ghim SHA256 và kích thước ảnh nguồn cho từng kết quả. Khi byte ảnh thay đổi phải tạo bằng chứng mới, không dùng câu trả lời của ảnh khác.
 
-Regex validator trước đây khớp từ `Total` ngay trong `Subtotal`. Phiên bản validator sau đã sửa. Đó là **sửa bài kiểm tra**, không phải model được cải thiện hồi tố.
+Đây là ví dụ về phương pháp đánh giá, **không** phải kết luận mọi phản hồi của Qwen đều sai hoặc khẳng định một tỷ lệ accuracy tổng quát.
 
-Cần tách **dữ liệu thật trên ảnh**, **văn bản model sinh** và **kết quả kiểm tự động**. Dù sửa validator, raw model output vẫn phải giữ nguyên.
-
-## Trường hợp 4 — SHA256 ảnh quyết định ý nghĩa bằng chứng
-
-Ảnh crossing cũ có **đèn người đi bộ đỏ** khi nhiều người qua vạch. Qwen đã nhận ra và cảnh báo nguy hiểm. Git hiện dùng **ảnh đèn xanh khác**, SHA256 khác. Không thể dùng câu trả lời cũ để đánh giá ảnh mới.
-
-**Bài học:** filename hay case ID không đủ chứng minh ảnh nào đã được đưa vào model. Cần ghi SHA256 của input.
-
-## Các biện pháp hữu ích
-
-- Ghi ground truth cho từng case, nhất là số liệu và chi tiết giao thông.
-- Tách kiểm OCR số, phép tính, quan hệ và độ trung thực của diễn đạt.
-- Lưu mọi output lỗi, không chỉ chọn kết quả đẹp để công bố.
-- Ghim ảnh/prompt, token IDs, EOS và timing cùng nhau.
-- Greedy repeat kiểm tính tái lập, không phải nhiều mẫu ngẫu nhiên độc lập.
-- Phân biệt chương trình hoàn thành, nội dung đúng và hệ thống sẵn sàng production.
-
-Các ví dụ giúp thiết kế benchmark OCR, image understanding và LLM regression tốt hơn. Không nên suy rộng rằng mọi output Qwen đều mắc những lỗi này.
-
-[Đánh giá](ACCEPTANCE.vi.md) · [Bằng chứng](FULL19-EVIDENCE.vi.md) · [Ảnh đầu vào](../examples/README.vi.md)
+[Đánh giá](ACCEPTANCE.vi.md) · [Full19](FULL19-EVIDENCE.vi.md) · [Ảnh đầu vào](../examples/README.vi.md)

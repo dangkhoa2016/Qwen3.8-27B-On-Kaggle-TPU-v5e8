@@ -71,10 +71,10 @@ QWEN38_BACKEND=mock python -m uvicorn api.app:app --host 127.0.0.1 --port 8090
 
 **Study or execute the TPU notebook** for actual 27B generation. It requires the correct BF16 Model, a matching support Dataset and eight TPU devices; see [step-by-step reproduction](REPRODUCIBILITY.md).
 
-The optional TPU HTTP adapter in `api/tpu_factory.py` and `api/maxengine_adapter.py` still differs from the notebook in its support path and 256/384 configuration. It is included for API-design study and **has not been demonstrated as live TPU serving**.
+The optional HTTP adapter in `api/tpu_factory.py` and `api/maxengine_adapter.py` uses a separate serving configuration. Live TPU HTTP latency and throughput have not been measured for that interface.
 
 ## What the evidence establishes
 
-A preserved **27 October 2026 experimental** Split-Vision run completed 19/19 automated cases with EOS in **1,160.844 s**. This is not a general throughput benchmark or proof of perfect image accuracy. The replacement crossing image has a different SHA256, so it requires its **own** TPU evidence before any result can be attributed to that input.
+A TPU session on **27 October 2026** completed 19/19 generation cases with EOS in **1,160.844 seconds**. Results apply only to the recorded inputs and source revision; they are not a general HTTP throughput benchmark or proof of perfect image accuracy.
 
 Continue with [Reproducibility](REPRODUCIBILITY.md), [Full19 example cases](FULL19-EVIDENCE.md), [performance measurements](PERFORMANCE-ANALYSIS.md) and [API architecture](../api/TPU-INTEGRATION.md).

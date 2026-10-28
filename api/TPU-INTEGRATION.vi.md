@@ -43,7 +43,7 @@ Model 27B BF16 chỉ nên được nạp **một lần**, sau khi xác minh chec
 
 ## Điểm khác biệt phải hiểu
 
-Notebook experimental dùng budget **320/768** và ảnh suy luận 512 × 384; adapter HTTP vẫn tham chiếu **256/384**, support mount cũ và ảnh 256 × 192 không có trong Dataset 48 file mới. Vì thế không được coi HTTP adapter là đúng đường inference notebook đã thử.
+Notebook trong Git cấu hình **320/768 token prefill/target** và ảnh suy luận 512 × 384. Adapter HTTP độc lập hiện có cấu hình token và xử lý ảnh khác, vì vậy kết quả và hiệu năng HTTP phải được kiểm chứng riêng; không thể dùng số đo notebook để nghiệm thu adapter này.
 
 ## Cần kiểm gì trước khi chạy HTTP TPU thật?
 
