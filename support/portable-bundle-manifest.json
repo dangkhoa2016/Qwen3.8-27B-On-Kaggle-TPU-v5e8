@@ -1,0 +1,241 @@
+{
+  "format": "QWEN38_FULL19_ORGANIZED_SUPPORT_V1",
+  "checkpoint": "Kaggle Qwen3.8-27B original BF16 model, attached separately",
+  "model_url": "https://www.kaggle.com/models/dangkhoa2016/qwen-qwen3-8-27b",
+  "required_file_count": 48,
+  "archive_count": 7,
+  "image_count": 16,
+  "source_manifest_sha256": "410ed5c04fb8161ced7dbf052bab65fe6fd1ff8a2c1eddff4a1a8e4f27e04b13",
+  "files": {
+    "cache/jit__encode_vision_jit-4cb9a255f15e0881c75bf026006a7cc082703a5525f4b89b3b0e99cb3b4ad2c0-cache": {
+      "bytes": 22920731,
+      "sha256": "12ee8d43c911d13762676f4d1496f5254da1aaac8470d2c7c2281b6e0731dd82"
+    },
+    "cache/jit__generate_jit-8583d9e06f6bcd9b55e0a85553b25aa59f5463d643d81b5fa7b8cd0ad361019b-cache": {
+      "bytes": 5904689,
+      "sha256": "ee76270eff0aa04a0128880cd30c44c3b2dfa99cfad69204fae64d4245698c57"
+    },
+    "cache/jit__prefill_jit-dcdb406dfc2f81d6bba26c7477187d1a24e1e80e16fcbbd16c4aa218cc38af75-cache": {
+      "bytes": 11013506,
+      "sha256": "434d5188f5b6b7a0cbcd3023da419b3c7b45570123b455d21d6714664859cc77"
+    },
+    "cache/pinned-cache-manifest.json": {
+      "bytes": 1032,
+      "sha256": "9e6659a953cea5efe3700becef7af33aa4a4678f4cb22d4eb7c860f0fdf34eee"
+    },
+    "cases/assets_manifest.json": {
+      "bytes": 3942,
+      "sha256": "4e88577ad09e2cecbf9e3497aa26b51ea7b235ffd79b3db67c79f1cf0d0e793f"
+    },
+    "cases/photo_showcase_cases.json": {
+      "bytes": 3075,
+      "sha256": "47ca3d84784067c6eccde25553fc55ce7a5503c7fe0ae53df8619eeb8b4dcd74"
+    },
+    "cases/vision_showcase_cases.json": {
+      "bytes": 3423,
+      "sha256": "3778b077edec192bd40e6531cba15eb82e9961ee3fcb6da1844b2dd58774cd94"
+    },
+    "helpers/aot_jax_pxla_phase_hooks.py": {
+      "bytes": 1251,
+      "sha256": "6e35f36bf2941f2eec4572494cf42e34001ffdb7ecfbd49c5a99ea6d9b446bdb"
+    },
+    "helpers/aot_native_layout_timing_hooks.py": {
+      "bytes": 1816,
+      "sha256": "ac58045e8ede38f5434a9761abc2001472d68b9012451c847e1d6d841325bce8"
+    },
+    "helpers/aot_native_metadata_hooks.py": {
+      "bytes": 1871,
+      "sha256": "2af90ff899d33807431e3c6c0490038fdd61893f2b7d84cf40d2e4dde297e32e"
+    },
+    "helpers/aot_pxla_nested_sharding_hooks.py": {
+      "bytes": 1385,
+      "sha256": "14b1b0f4fb56eba30936cdc4753edbed3320ea5ce505de40647b1486da702e2d"
+    },
+    "helpers/aot_sharding_metadata_reuse_strict.py": {
+      "bytes": 2353,
+      "sha256": "1c2d67739db83725016a88a775e1b7fbe75a80603ae76956ef4613811c182ed6"
+    },
+    "helpers/split_vision_maxtext.patch": {
+      "bytes": 5985,
+      "sha256": "7ba8d1bdedbfab2c8338c101ca94f51580caf4d4ee80982225f58fe5daec5a65"
+    },
+    "images/cozy_daylight_workspace_with_city_views.jpg": {
+      "bytes": 94299,
+      "sha256": "134410a37ecf5ffe6aad73fd24dd17f9ae2f455605ca0e801198fe2e92ecd48e"
+    },
+    "images/northstar_office_supply_invoice.jpg": {
+      "bytes": 85685,
+      "sha256": "ba91d31a9c4242ed127bf6ff8af0bff467b9d254f713f995934bdd86bb50c5c9"
+    },
+    "images/photo_ai_city_crossing_1280x960.png": {
+      "bytes": 2014511,
+      "sha256": "ed532c2ba4e7eace4a81e4adfd6867c68f244fe4d64293f2bbfd1097ad7d0356"
+    },
+    "images/photo_ai_dog_walking_1280x960.png": {
+      "bytes": 2277733,
+      "sha256": "5ffee19b8a0d8505aa775a5ef5dabb4eba241dbb6e09d5634cfd0eb976271ce8"
+    },
+    "images/photo_ai_farmers_market_1280x960.png": {
+      "bytes": 2129713,
+      "sha256": "14778086dc9f163944f14cc08e4d0ce8c50a8017433530f875f62d9391b06b0c"
+    },
+    "images/photo_ai_supermarket_1280x960.png": {
+      "bytes": 2040225,
+      "sha256": "be608c35af3560268e92265b404fbedfc20e6a2b7eeb3b9acd0bda6c2dc242c1"
+    },
+    "images/photo_ai_vietnamese_meal_1280x960.png": {
+      "bytes": 1910402,
+      "sha256": "5b9f882cb14b058ffa23348bb1ebe191eac77990110302f125492f3c33c1518b"
+    },
+    "images/vision_2d_city_bike_dashboard.jpg": {
+      "bytes": 177967,
+      "sha256": "6ff7bef92bd089439492f21ad33768e8aefaeb2d0728ebeded793b3649988562"
+    },
+    "images/vision_2d_smart_greenhouse.jpg": {
+      "bytes": 173930,
+      "sha256": "519f46861be8dea5218acd31d9e0ddf5a8104f8206c895ba6e673cb064ed6f14"
+    },
+    "images/vision_3d_robotics_station.jpg": {
+      "bytes": 141059,
+      "sha256": "a9fc17c1c5fb8939274f436c10e16b5b94747df83e64cd223abf5d04c5b769c6"
+    },
+    "images/vision_3d_warehouse_dock_b2.jpg": {
+      "bytes": 150187,
+      "sha256": "fa32bc2071cfe04657730750ab91a76cf5537b7476723e4e120c86dd897e8aaa"
+    },
+    "images/vision_real_fresh_market.jpg": {
+      "bytes": 154474,
+      "sha256": "5bfb817a49098c3c47e20a7ac77fa9abec429fa8c44d4f2c9b6677b25feddc7e"
+    },
+    "images/vision_real_sprint_workspace.jpg": {
+      "bytes": 165034,
+      "sha256": "f990df6e91fdba3389d2efd2d607ca7866ad1529b4e5e6f94bbb2f01e9e0a30f"
+    },
+    "images/vision_test_card_482_1280x960.png": {
+      "bytes": 38415,
+      "sha256": "adcaefe8df1a2960682dcfe5e7b9326d0eb3fc49ae7ae97ba0a5b06bfd88d09b"
+    },
+    "images/vision_test_card_731_1280x960.png": {
+      "bytes": 34427,
+      "sha256": "8cb36e800616549858885060313820fbe32b0d5b68f110cf00ae81d8e51856d6"
+    },
+    "images/warm_desk_still_life_with_business_card.jpg": {
+      "bytes": 99419,
+      "sha256": "000de08a043dcbaa52265581a81a5bdfcf056150edc01d084b9a817446abac6d"
+    },
+    "runtime/engine_args.py": {
+      "bytes": 1189,
+      "sha256": "a416ed6734e59ec0df488358ebc35db94c6012eeca05c93e206d447b7e892f79"
+    },
+    "runtime/manifest.json": {
+      "bytes": 828,
+      "sha256": "be479e2b5f6039bc51891ae28d35b21d9212eb8609698667685b0dd2a15c267f"
+    },
+    "source/maxtext-f0b2abe-qwen38-text-vision-patched.tar.gz.blob": {
+      "bytes": 43696023,
+      "sha256": "5c67ce755065849c13003cf7b157a6aad90601c2bbdbb44329498d9fb61016d2"
+    },
+    "source/maxtext-qwen38-production-text-vision.patch": {
+      "bytes": 29005,
+      "sha256": "07f27724c7e6d7267258eab99bfbe3172329ca359959a36f73fee29531acb8e6"
+    },
+    "wheels/aqtp-0.9.0-py3-none-any.whl": {
+      "bytes": 901643,
+      "sha256": "5efdccd24657e149d3ac17599bb3d4eb88297fdc6aab14eaba0c70625057a257"
+    },
+    "wheels/drjax-0.2.1-py3-none-any.whl": {
+      "bytes": 24733,
+      "sha256": "9ec93541a7ba0af864d599cd3e14770a19e291a6291b8b79ddf6b92e8b173494"
+    },
+    "wheels/einshape-1.0-py3-none-any.whl": {
+      "bytes": 21392,
+      "sha256": "42da4c2dea3a27f87ee45a7cee5072a636b97cb184bb07bf5d6412ba0ff7b965"
+    },
+    "wheels/fastapi-0.115.12-py3-none-any.whl": {
+      "bytes": 95164,
+      "sha256": "e94613d6c05e27be7ffebdd6ea5f388112e5e430c8f7d6494a9d1d88d43e814d"
+    },
+    "wheels/jaxtyping-0.3.11-py3-none-any.whl": {
+      "bytes": 56593,
+      "sha256": "8a4bedc4e3f963fa82df41bd13c7ebc2bad925601eb48614c65798f21329d4e3"
+    },
+    "wheels/pathwaysutils-0.1.12-py3-none-any.whl": {
+      "bytes": 150186,
+      "sha256": "3aab3cd936ea9076c469b731cbdca43a453736594c65bdcee4b274c10ce51c34"
+    },
+    "wheels/qwix-0.1.8-py3-none-any.whl": {
+      "bytes": 168088,
+      "sha256": "0f4686f7f10a1168787fac4fbaf4d9883bcb8f78a01f2ff1cd3834d39f859b12"
+    },
+    "wheels/starlette-0.46.2-py3-none-any.whl": {
+      "bytes": 72037,
+      "sha256": "595633ce89f8ffa71a015caed34a5b2dc1c0cdb3f0f1fbd1e69339cf2abeec35"
+    },
+    "wheels/tiktoken-0.14.0-cp312-cp312-manylinux_2_28_x86_64.whl": {
+      "bytes": 1204197,
+      "sha256": "7896eea257fe497a2b7134474d909156c6744ce8da35bce88011a960e008aa0d"
+    },
+    "wheels/tiktoken-0.14.0-cp313-cp313-manylinux_2_28_x86_64.whl": {
+      "bytes": 1203884,
+      "sha256": "26e60f6a956ee171ab728b37b8439905d7ea1db435c30f9822f291e9861c861d"
+    },
+    "wheels/tokamax-0.0.14-py3-none-any.whl": {
+      "bytes": 1412391,
+      "sha256": "a10a91bbb6ddf406bb7006cb1a27af59a6faaa6cb06fe788249dd10d9eaac409"
+    },
+    "wheels/typeguard-2.13.3-py3-none-any.whl": {
+      "bytes": 17605,
+      "sha256": "5e3e3be01e887e7eafae5af63d1f36c849aaa94e3a0112097312aabfa16284f1"
+    },
+    "wheels/uvicorn-0.34.2-py3-none-any.whl": {
+      "bytes": 62483,
+      "sha256": "deb49af569084536d269fe0a6d67e3754f104cf03aba7c11c40f01aadf33c403"
+    },
+    "wheels/wadler_lindig-0.1.7-py3-none-any.whl": {
+      "bytes": 20516,
+      "sha256": "e3ec83835570fd0a9509f969162aeb9c65618f998b1f42918cfc8d45122fe953"
+    },
+    "wheels/xprof-2.23.1-py3-none-manylinux_2_27_x86_64.whl": {
+      "bytes": 24713873,
+      "sha256": "96701f868b7a736a789d0a4b5efeeb269feaed63348117707e853a72e006c722"
+    }
+  },
+  "archives": {
+    "cache.zip": {
+      "sha256": "07c85205ed7aaa953d288ed8a92ebdb5e0c8352209966a4c36ebfbc187f68c21",
+      "bytes": 39840872,
+      "file_count": 4
+    },
+    "cases.zip": {
+      "sha256": "7b9d1122e4d123aef516bac76ca3b4119c0f91c8b3e762229829529db9d26d64",
+      "bytes": 10832,
+      "file_count": 3
+    },
+    "helpers.zip": {
+      "sha256": "36565e558d70b7b8e800bf6a8e2e003d0b7640fa22fa0dab8f4abb30ea91109d",
+      "bytes": 15507,
+      "file_count": 6
+    },
+    "images.zip": {
+      "sha256": "24179a9b1cf9a9d4b497cd3599ab3c54d9cc6a0f734eabc074e5673e5637edd8",
+      "bytes": 11689808,
+      "file_count": 16
+    },
+    "runtime.zip": {
+      "sha256": "c1c00553aa87d7f05288ee7f4faa06cb9bb14831b67d2cf11a3155871f128284",
+      "bytes": 2245,
+      "file_count": 2
+    },
+    "source.zip": {
+      "sha256": "4c921295b05f5a97c68ec49d2c4ed13a49ac3c7b63ef3bca2e966c6bd09cd0d6",
+      "bytes": 43725396,
+      "file_count": 2
+    },
+    "wheels.zip": {
+      "sha256": "182f99d32710e7f911c2722fa1c08361cf0525bd680012487a1fc4753cb39c53",
+      "bytes": 30127009,
+      "file_count": 15
+    }
+  },
+  "notice": "Support files are not model weights. Component licenses and prominent modification notices accompany redistributed source."
+}
