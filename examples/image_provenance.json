@@ -1,0 +1,13 @@
+{
+  "schema_version": 1,
+  "scope": "version_controlled_input_provenance",
+  "case_id": "photo-ai-city-crossing",
+  "image_path": "examples/images/photo_ai_city_crossing_1280x960.png",
+  "sha256": "ed532c2ba4e7eace4a81e4adfd6867c68f244fe4d64293f2bbfd1097ad7d0356",
+  "dimensions": [
+    1280,
+    960
+  ],
+  "source_note": "An illustrated crossing scene used as a model input. SHA256 identifies the exact image bytes.",
+  "inference_note": "No inference outcome is implied by image integrity checks."
+}
