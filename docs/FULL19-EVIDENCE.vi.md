@@ -65,6 +65,73 @@ Notebook sẽ tạo thư mục theo UTC tại /kaggle/working, với
 cases/full19-final.json cho EN, cases/full19-vi.json cho VI nếu bật
 và các file Gallery xuất bằng CPU.
 
+## Kết quả lượt chạy mẫu và nguồn bằng chứng
+
+Các kết quả dưới đây minh họa cách kiểm tra một lượt chạy Full19 đã hoàn tất.
+Mức hoàn tất sinh văn bản, độ đúng nội dung ảnh và hiệu năng là các phép đo khác nhau.
+
+### Notebook Git-first (15/11/2026 UTC)
+
+Notebook Kaggle TPU v5e-8 chạy checkpoint BF16 nguyên gốc bằng mã nguồn Git
+công khai lấy từ `main`. File `source-provenance.json` ghi lại chính xác
+commit nguồn `f3c440fb78d1c6de0892a6ebc87abb9c9ff9d007`.
+
+### Tải kết quả Full19
+
+Dữ liệu gốc của lượt chạy được công bố qua **[GitHub Release Assets v1.0.0](https://github.com/dangkhoa2016/Qwen3.8-27B-On-Kaggle-TPU-v5e8/releases/tag/v1.0.0)**,
+không phụ thuộc vào trang hoặc URL notebook Kaggle.
+
+| Tải về | Nội dung |
+|---|---|
+| [Source provenance](https://github.com/dangkhoa2016/Qwen3.8-27B-On-Kaggle-TPU-v5e8/releases/download/v1.0.0/source-provenance.json) | Git commit nguồn và provenance của runtime |
+| [Full19 results ZIP](https://github.com/dangkhoa2016/Qwen3.8-27B-On-Kaggle-TPU-v5e8/releases/download/v1.0.0/full19-results.zip) | Hai file JSON gốc `cases/full19-final.json` và `cases/full19-vi.json`, kèm SHA256 |
+| [HTML Gallery ZIP](https://github.com/dangkhoa2016/Qwen3.8-27B-On-Kaggle-TPU-v5e8/releases/download/v1.0.0/inference-gallery.zip) | Gallery tĩnh, gồm `gallery/evidence.json` và ảnh nguồn |
+| [SHA256 checksums](https://github.com/dangkhoa2016/Qwen3.8-27B-On-Kaggle-TPU-v5e8/releases/download/v1.0.0/SHA256SUMS) | Mã băm của provenance và hai file ZIP đã công bố |
+
+Nội dung JSON được giữ nguyên từng byte bên trong ZIP kết quả, thay vì đưa
+hàng nghìn dòng dữ liệu sinh ra vào Git diff. Sau khi giải nén, có thể
+đối chiếu hai file JSON bằng `SHA256SUMS` bên trong. Gallery ZIP cũng được
+giữ nguyên và có thể xem bằng HTTP server tĩnh mà không cần chạy TPU hoặc
+truy cập notebook bên ngoài.
+
+| Trường dữ liệu | Kết quả quan sát |
+|---|---|
+| Thiết bị TPU | 8/8 thiết bị TPU v5e |
+| Thực thi notebook | Hoàn tất 17/17 code cell, không có Python error output |
+| Full19 tiếng Anh | 19/19 case đạt EOS |
+| Câu trả lời tiếng Việt | Sinh 17/17; cả hai thẻ OCR số dùng lại kết quả chữ số |
+| Runtime Assets | 48 file được kiểm bằng SHA256 theo support manifest |
+| Xuất Gallery | HTML tĩnh, 19 bản ghi case, 16 ảnh nguồn và `inference-gallery.zip` |
+| Kiểm chứng Gallery | Đã kiểm toàn vẹn ZIP, SHA256 ảnh và truy cập HTTP |
+
+SHA256 của Gallery ZIP đã lưu là
+`ad528622567f8c0e283014aac0091eadf6fe1a43476decbc9b78f71151f14a0b`.
+SHA256 của support manifest là
+`fb2ee48dfe423733499112668d61e965b5d8d7466d52361b403c68dbc5768817`.
+Commit nguồn gốc vẫn truy xuất được khi các cập nhật tài liệu sau này làm `main` thay đổi.
+
+Các kết quả **không phải điểm độ chính xác nội dung**. [Tiêu chí đánh giá](FAILURE-ANALYSIS.vi.md)
+bao gồm số thuế hóa đơn, phép tính dashboard giao hàng và các trường
+danh thiếp bị thiếu giữa câu trả lời tiếng Anh và tiếng Việt. Giữ nguyên raw output.
+
+### Lượt chạy cũ có nhúng source (12/11/2026 UTC)
+
+Đây là lượt chạy Kaggle lịch sử riêng biệt, không phải một notebook khác trong
+repository. Không áp dụng các phép đo khởi tạo nguội này cho lượt chạy Git-first.
+
+| Bằng chứng lịch sử | Kết quả quan sát |
+|---|---|
+| Thiết bị TPU | 8/8 thiết bị TPU v5e |
+| Thực thi notebook | 17/17 code cell, không có Python error output |
+| Full19 tiếng Anh | 19/19 case đạt EOS |
+| Câu trả lời tiếng Việt | Sinh 17/17; cả hai thẻ OCR số dùng lại kết quả chữ số |
+| Kết quả xuất | HTML Gallery tĩnh và `inference-gallery.zip` |
+| Thời gian nạp checkpoint lần đầu | 149,339 giây |
+| Chẩn đoán OCR đầu tiên | Vision ~33,95 giây; prefill ~259,80 giây; decode ~186,80 giây cho 4 token, gồm chi phí cold-start |
+
+Các thời lượng đầu tiên này không phải throughput ổn định hay HTTP latency.
+Cần đánh giá độc lập raw output và độ chính xác của số liệu/hình ảnh.
+
 ## Cách diễn giải
 
 EOS chỉ xác nhận kết thúc sinh token.

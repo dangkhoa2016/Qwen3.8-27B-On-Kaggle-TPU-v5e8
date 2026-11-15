@@ -54,23 +54,15 @@ These are **source images used as model inputs**, not model-generated results. T
 6. Run all cells to execute the 19 English cases, optionally 17 Vietnamese responses, and export the HTML Gallery.
 7. In the Kaggle editor, optional cell 17 serves the Gallery through a temporary Tunnel; batch/API executions skip the interactive hold.
 
-The earlier Kaggle execution is historical evidence, not a second notebook in this repository.
+## Example inference results
 
-## Historical TPU execution evidence (12 November 2026 UTC)
+A completed Kaggle TPU v5e-8 run produced model responses for all 19 English cases
+and 17 additional Vietnamese responses, along with a downloadable static HTML Gallery.
+[Explore the Full19 results and source details](docs/FULL19-EVIDENCE.md).
+[View release notes and Full19 downloads](https://github.com/dangkhoa2016/Qwen3.8-27B-On-Kaggle-TPU-v5e8/releases/tag/v1.0.0).
 
-The **earlier embedded-source notebook** executed on a real **TPU v5e-8 (8 devices)** with the original BF16 checkpoint. These observed log results **do not validate the canonical Git-first notebook**; its fresh TPU acceptance is still pending.
-
-| Observed execution evidence | Result |
-|---|---|
-| TPU hardware gate | PASS, 8/8 TPU devices |
-| Notebook code cells executed | 17/17, without Python error outputs |
-| English Full19 cases reaching EOS | 19/19 (3 Text, 2 numeric OCR, 6 Rich Vision, 8 Photography) |
-| Additional Vietnamese responses completed | 17/17; the 2 numeric OCR cards reuse their English digit outputs |
-| Export | Static HTML Gallery and `inference-gallery.zip` created |
-| First checkpoint load | 149.339 s |
-| First OCR diagnostic | Vision ~33.95 s; prefill ~259.80 s; decode ~186.80 s for 4 tokens, including cold-start overhead |
-
-**Limitations:** EOS and automated review flags do not establish semantic accuracy. Individual outputs require human review; the first OCR diagnostic is **not steady-state throughput**. Gallery ZIP and full per-case data have not yet been independently reviewed in this repository. See [evaluation criteria](docs/ACCEPTANCE.md) and [timing methodology](docs/PERFORMANCE-ANALYSIS.md).
+These counts describe generation completion, **not factual accuracy**. See
+[how to review visual facts and calculations](docs/FAILURE-ANALYSIS.md).
 
 ## Notebook configuration
 

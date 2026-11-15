@@ -54,23 +54,15 @@ không chạy thêm lần suy luận OCR tiếng Việt.
 6. Chạy tất cả cell để thực thi 19 case tiếng Anh, tùy chọn 17 câu trả lời tiếng Việt, và xuất HTML Gallery.
 7. Trong Kaggle editor, cell 17 tùy chọn chia sẻ Gallery qua Tunnel tạm thời; batch/API tự bỏ qua thời gian giữ phiên tương tác.
 
-Lần chạy Kaggle trước đây được giữ làm bằng chứng lịch sử, không phải notebook thứ hai trong repository.
+## Ví dụ kết quả suy luận
 
-## Bằng chứng chạy TPU lịch sử (12/11/2026 UTC)
+Một lượt chạy Kaggle TPU v5e-8 đã tạo câu trả lời cho đủ 19 case tiếng Anh
+và thêm 17 câu trả lời tiếng Việt, cùng HTML Gallery tĩnh có thể tải về.
+[Xem kết quả Full19 và nguồn dữ liệu của lượt chạy](docs/FULL19-EVIDENCE.vi.md).
+[Xem release notes và tải kết quả Full19](https://github.com/dangkhoa2016/Qwen3.8-27B-On-Kaggle-TPU-v5e8/releases/tag/v1.0.0).
 
-Notebook **cũ có nhúng source** từng chạy trên **TPU v5e-8 thật (8 thiết bị)** với checkpoint BF16 nguyên gốc. Các log sau xác nhận **mức hoàn tất thực thi**, **không phải** nghiệm thu TPU của notebook Git-first chính thức; bước nghiệm thu mới vẫn đang chờ.
-
-| Bằng chứng thực thi quan sát được | Kết quả |
-|---|---|
-| Kiểm tra thiết bị TPU | PASS, đủ 8/8 TPU |
-| Cell code notebook đã chạy | 17/17, không có Python error output |
-| Case EN Full19 đạt EOS | 19/19 (3 Text, 2 OCR số, 6 Rich Vision, 8 Photography) |
-| Câu trả lời VI bổ sung hoàn tất | 17/17; 2 thẻ OCR số dùng lại kết quả chữ số EN |
-| Xuất kết quả | Đã tạo HTML Gallery tĩnh và `inference-gallery.zip` |
-| Nạp checkpoint lần đầu | 149,339 giây |
-| Chẩn đoán OCR đầu tiên | Vision ~33,95 giây; prefill ~259,80 giây; decode ~186,80 giây / 4 token, gồm overhead cold-start |
-
-**Giới hạn:** EOS và cờ kiểm tra tự động không chứng minh nội dung chính xác. Vẫn cần đánh giá thủ công từng câu trả lời; số liệu OCR đầu tiên **không phải tốc độ ổn định**. Nội dung ZIP Gallery và dữ liệu từng case chưa được review độc lập trong repository này. Xem [tiêu chí đánh giá](docs/ACCEPTANCE.vi.md) và [phương pháp đo](docs/PERFORMANCE-ANALYSIS.vi.md).
+Các con số thể hiện mức hoàn tất sinh câu trả lời, **không phải độ chính xác**. Xem
+[cách đánh giá chi tiết hình ảnh và phép tính](docs/FAILURE-ANALYSIS.vi.md).
 
 ## Cấu hình notebook
 

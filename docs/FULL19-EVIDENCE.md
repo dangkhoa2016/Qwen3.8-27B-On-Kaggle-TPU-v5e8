@@ -65,6 +65,73 @@ The template writes a UTC-stamped folder under /kaggle/working, with
 cases/full19-final.json for English, cases/full19-vi.json when Vietnamese
 inference is enabled, and the exported Gallery.
 
+## Example run results and provenance
+
+These recorded outputs illustrate how to inspect a completed Full19 run.
+Generation completion, visual correctness and model performance are different measurements.
+
+### Git-first notebook (15 November 2026 UTC)
+
+The Kaggle TPU v5e-8 notebook ran the original BF16 checkpoint with public Git
+source resolved from `main`. Its `source-provenance.json` records the exact
+source commit `f3c440fb78d1c6de0892a6ebc87abb9c9ff9d007`.
+
+### Download the Full19 outputs
+
+The original run outputs are distributed as **[v1.0.0 GitHub Release Assets](https://github.com/dangkhoa2016/Qwen3.8-27B-On-Kaggle-TPU-v5e8/releases/tag/v1.0.0)**.
+They remain available independently of the Kaggle notebook page or its URL.
+
+| Download | Contents |
+|---|---|
+| [Source provenance](https://github.com/dangkhoa2016/Qwen3.8-27B-On-Kaggle-TPU-v5e8/releases/download/v1.0.0/source-provenance.json) | Git source commit and runtime provenance |
+| [Full19 results ZIP](https://github.com/dangkhoa2016/Qwen3.8-27B-On-Kaggle-TPU-v5e8/releases/download/v1.0.0/full19-results.zip) | Original `cases/full19-final.json` and `cases/full19-vi.json`, plus their SHA256 checksums |
+| [HTML Gallery ZIP](https://github.com/dangkhoa2016/Qwen3.8-27B-On-Kaggle-TPU-v5e8/releases/download/v1.0.0/inference-gallery.zip) | Static Gallery, including `gallery/evidence.json` and source images |
+| [SHA256 checksums](https://github.com/dangkhoa2016/Qwen3.8-27B-On-Kaggle-TPU-v5e8/releases/download/v1.0.0/SHA256SUMS) | Hashes of the published provenance and ZIP files |
+
+The JSON contents are preserved byte-for-byte inside the results ZIP, rather than
+committed as thousands of lines of generated data. After extracting it, verify
+the JSON files against the included `SHA256SUMS`. The Gallery ZIP also remains
+unchanged and can be viewed locally using a static HTTP server; no TPU run or
+external notebook is needed.
+
+| Recorded field | Observed result |
+|---|---|
+| TPU devices | 8/8 TPU v5e devices |
+| Notebook execution | 17/17 code cells completed without Python error outputs |
+| English Full19 | 19/19 cases reached EOS |
+| Vietnamese responses | 17/17 generated; the two numeric OCR cards reuse their digit outputs |
+| Runtime Assets | 48 files checked against the support SHA256 manifest |
+| Gallery export | Static HTML, 19 case entries, 16 source images and `inference-gallery.zip` |
+| Gallery verification | ZIP integrity, image SHA256 and HTTP access checks completed |
+
+The saved Gallery ZIP has SHA256
+`ad528622567f8c0e283014aac0091eadf6fe1a43476decbc9b78f71151f14a0b`.
+The support manifest SHA256 is
+`fb2ee48dfe423733499112668d61e965b5d8d7466d52361b403c68dbc5768817`.
+The original source commit remains traceable if later documentation changes advance `main`.
+
+The results are **not a factual-accuracy score**. The [review criteria](FAILURE-ANALYSIS.md)
+cover invoice tax values, delivery-dashboard arithmetic and missing business-card
+details across English and Vietnamese responses. Keep raw model outputs unchanged.
+
+### Earlier embedded-source run (12 November 2026 UTC)
+
+This is a separate historical Kaggle execution, not another notebook in this
+repository. Its cold-start measurements must not be attributed to the Git-first run.
+
+| Historical observation | Observed result |
+|---|---|
+| TPU devices | 8/8 TPU v5e devices |
+| Notebook execution | 17/17 code cells without Python error outputs |
+| English Full19 | 19/19 cases reached EOS |
+| Vietnamese responses | 17/17 generated; the two numeric OCR cards reused their digit outputs |
+| Export | Static HTML Gallery and `inference-gallery.zip` |
+| First checkpoint load | 149.339 s |
+| First OCR diagnostic | Vision ~33.95 s; prefill ~259.80 s; decode ~186.80 s for 4 tokens, including cold-start overhead |
+
+These first-pass timings are not steady-state throughput or HTTP latency.
+The raw responses and numerical/visual accuracy require independent review.
+
 ## Interpretation
 
 EOS indicates that token generation ended. **It is not a certificate of
